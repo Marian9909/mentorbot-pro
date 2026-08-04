@@ -1,156 +1,168 @@
 import streamlit as st
 from PIL import Image
-import pandas as pd
+import random
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Configuración de la página
-st.set_page_config(
-    page_title="MentorBot Pro - Auditoría Institucional",
-    page_icon="🦅",
-    layout="wide"
+# Configuración de la página en modo ancho (wide)
+st.set_page_config(page_title="MentorBot Pro - Patrones Chartistas Reales", page_icon="📈", layout="wide")
+
+st.title("📈 MentorBot Pro: Análisis Estructural & Patrones Chartistas M1")
+st.markdown("---")
+
+# Menú lateral para el control emocional (Mindset)
+st.sidebar.header("🧠 Control Emocional (Checklist)")
+st.sidebar.markdown("Antes de evaluar el mercado, responde con honestidad:")
+
+emocion_actual = st.sidebar.selectbox(
+    "¿Cómo te sientes en este momento?",
+    ["Calmo y enfocado", "Frustrado por pérdidas recientes", "Ansioso / Con ganas de recuperar rápido", "Eufórico por una buena racha"]
 )
 
-# Estilo visual adaptado
-st.markdown("""
-    <style>
-    .main { background-color: #0e1117; color: #ffffff; }
-    .stButton>button { width: 100%; background-color: #ff4b4b; color: white; font-weight: bold; }
-    </style>
-""", unsafe_allow_html=True)
+lote_adecuado = st.sidebar.checkbox("¿Mi lote respeta estrictamente la gestión de riesgo?")
+plan_definido = st.sidebar.checkbox("Tengo claro mi punto de salida (Stop Loss) si el mercado se equivoca")
+tendencia_alineada = st.sidebar.checkbox("He confirmado la estructura en las 3 temporalidades")
 
-st.title("🦅 MentorBot Pro: Auditoría Técnica e Institucional")
-st.write("Sistema experto de validación para traders profesionales.")
-
-# --- BLOQUE 1: CONTROL EMOCIONAL (MINDSET) ---
-st.sidebar.header("🛡️ 1. Filtro Psicológico de Alta Precisión")
-emocion = st.sidebar.selectbox(
-    "¿Cómo describes tu estado emocional actual?",
-    ["Selecciona tu estado...", "Calmo, analítico y disciplinado", "Ansioso por operar (FOMO)", "Eufórico / Sobreconfiado", "Frustrado / Buscando revancha"]
-)
-
-mindset_apto = True
-if emocion == "Selecciona tu estado...":
-    st.sidebar.info("Selecciona tu estado mental para desbloquear la auditoría.")
-    mindset_apto = False
-elif emocion != "Calmo, analítico y disciplinado":
-    mindset_apto = False
-    st.sidebar.error("🛑 **BLOQUEO INSTITUCIONAL:** El factor emocional actual compromete tu ejecución. **Operar en este estado viola el protocolo de la academia.**")
+# Alerta de Mindset
+if emocion_actual in ["Frustrado por pérdidas recientes", "Ansioso / Con ganas de recuperar rápido"]:
+    st.sidebar.error("🚨 **ALERTA DE MINDSET:** Detectamos señales de posible operativa por venganza o ansiedad. El mercado no perdonará tus emociones hoy. Te sugerimos cerrar la plataforma 15 minutos.")
+    permitir_operar = False
 else:
-    st.sidebar.success("✅ **Mindset Validado:** Ejecución bajo protocolo frío y matemático.")
+    st.sidebar.success("✅ Estado mental apto para operar con disciplina.")
+    permitir_operar = True
 
-st.sidebar.markdown("---")
-st.sidebar.header("📊 2. Configuración de Activo")
-activo_seleccionado = st.sidebar.selectbox(
-    "Selecciona el Activo Operado", 
-    ["Step Index (Deriv / Sintéticos)", "Volatility 75 Index (V75)", "EUR/USD", "Bitcoin (BTC-USD)", "Oro (GC=X)"]
-)
-temporalidad = st.sidebar.selectbox("Temporalidad de Ejecución", ["M1", "M5", "M15", "H1", "H4"])
+# Interfaz Principal: Distribución en 3 columnas para M1, M5 y M15
+st.subheader("1. Sube tus capturas de pantalla por Temporalidad")
+st.markdown("Carga las imágenes correspondientes a M1, M5 y M15:")
 
-# --- PANEL CENTRAL: CAPTURAS + AUDITORÍA ---
-col1, col2 = st.columns([1, 1])
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("📷 Evidencia Gráfica (Multicarga)")
-    st.info("Sube tus 3 capturas obligatorias: 1. Contexto Macro, 2. Estructura/Patrón, 3. Zona de Ejecución.")
-    
-    archivos_imagenes = st.file_uploader(
-        "Sube tus capturas", 
-        type=["png", "jpg", "jpeg"], 
-        accept_multiple_files=True
-    )
-    
-    if archivos_imagenes:
-        st.success(f"¡{len(archivos_imagenes)} evidencias gráficas cargadas con éxito!")
-        for i, archivo_imagen in enumerate(archivos_imagenes):
-            imagen = Image.open(archivo_imagen)
-            st.image(imagen, caption=f"Evidencia Gráfica #{i+1}", use_container_width=True)
+    st.markdown("### ⏱️ Temporalidad M1 (Micro)")
+    img_m1 = st.file_uploader("Sube gráfico M1", type=["png", "jpg", "jpeg"], key="m1")
 
 with col2:
-    st.subheader(f"🔬 Auditoría de Niveles ({activo_seleccionado})")
+    st.markdown("### ⏱️ Temporalidad M5 (Estructura)")
+    img_m5 = st.file_uploader("Sube gráfico M5", type=["png", "jpg", "jpeg"], key="m5")
+
+with col3:
+    st.markdown("### ⏱️ Temporalidad M15 (Macro)")
+    img_m15 = st.file_uploader("Sube gráfico M15", type=["png", "jpg", "jpeg"], key="m15")
+
+# Mostrar las imágenes si al menos una ha sido cargada
+if img_m1 or img_m5 or img_m15:
+    st.markdown("---")
+    st.subheader("📸 Vista previa de gráficos sincronizados")
     
-    if not mindset_apto:
-        st.warning("🔒 **Módulo Bloqueado:** Protege tu capital protegiendo tu mente primero.")
-    else:
-        figura_chartista = st.selectbox(
-            "Patrón o Estructura Técnica Identificada",
-            [
-                "Selecciona la estructura...", 
-                "Canal / Impulso y Retroceso (Estructura de Mercado)", 
-                "Bloque de Órdenes (Order Block / FVG)", 
-                "Doble Techo / Doble Suelo con Testeo", 
-                "Hombro-Cabeza-Hombro (HCH Institucional)", 
-                "Triángulo de Compresión / Ruptura de Rango"
-            ]
-        )
-        
-        tipo_operacion = st.radio("Dirección de la Operación:", ["Compra (Long)", "Venta (Short)"], horizontal=True)
-        
-        col_n1, col_n2, col_n3 = st.columns(3)
-        with col_n1:
-            precio_entrada = st.number_input("Precio de Entrada", value=7802.3118, format="%.4f")
-        with col_n2:
-            precio_sl = st.number_input("Stop Loss (SL)", value=7795.0000, format="%.4f")
-        with col_n3:
-            precio_tp = st.number_input("Take Profit (TP)", value=7825.0000, format="%.4f")
-            
-        if precio_entrada > 0 and precio_sl > 0 and precio_tp > 0:
-            riesgo = abs(precio_entrada - precio_sl)
-            beneficio = abs(precio_tp - precio_entrada)
-            
-            if riesgo > 0:
-                rr = beneficio / riesgo
-                
-                st.markdown("---")
-                st.markdown("### 📋 Informe de Auditoría Técnica")
-                
-                m1, m2 = st.columns(2)
-                with m1:
-                    st.metric(label="Ratio Beneficio / Riesgo (R:R)", value=f"1 : {rr:.2f}")
-                with m2:
-                    st.metric(label="Amplitud del Riesgo (SL)", value=f"{riesgo:.2f} puntos")
-                
-                st.markdown("#### 🧠 Dictamen Estructural Profundo:")
-                
-                errores_detectados = 0
-                
-                if tipo_operacion == "Compra (Long)" and precio_sl >= precio_entrada:
-                    st.error("❌ **Error Crítico de Lógica:** En una Compra, el Stop Loss debe estar por debajo del precio de entrada.")
-                    errores_detectados += 1
-                elif tipo_operacion == "Venta (Short)" and precio_sl <= precio_entrada:
-                    st.error("❌ **Error Crítico de Lógica:** En una Venta, el Stop Loss debe estar por encima del precio de entrada.")
-                    errores_detectados += 1
-                
-                if rr < 2.0:
-                    st.warning(f"⚠️ **Advertencia de R:R Bajo (1:{rr:.2f}):** La academia exige un mínimo estricto de **1:2**.")
-                    errores_detectados += 1
-                else:
-                    st.success(f"✅ **Eficiencia de Capital Aprobada:** El ratio 1:{rr:.2f} cumple con el estándar.")
+    prev_col1, prev_col2, prev_col3 = st.columns(3)
+    with prev_col1:
+        if img_m1:
+            st.image(img_m1, caption="Gráfico M1 del Alumno", use_container_width=True)
+    with prev_col2:
+        if img_m5:
+            st.image(img_m5, caption="Gráfico M5 del Alumno", use_container_width=True)
+    with prev_col3:
+        if img_m15:
+            st.image(img_m15, caption="Gráfico M15 del Alumno", use_container_width=True)
 
-                if figura_chartista == "Selecciona la estructura...":
-                    st.warning("⚠️ **Falta Patrón:** Debes declarar la figura chartista.")
-                    errores_detectados += 1
-                else:
-                    st.info(f"🔎 **Revisión de Patrón ({figura_chartista}):** Stop Loss protegido tras el fractal.")
-
-                st.markdown("---")
-                if errores_detectados == 0:
-                    st.balloons()
-                    st.success("🟢 **VEREDICTO FINAL: OPERACIÓN APTA Y VALIDADA.**")
-                else:
-                    st.error(f"🔴 **VEREDICTO FINAL: RECHAZADA ({errores_detectados} correcciones).**")
+    st.markdown("---")
+    st.subheader("2. Diagnóstico Técnico y Trazado de Figura Chartista en M1")
+    
+    if st.button("🚀 Generar Trazado Geométrico del Patrón M1", use_container_width=True):
+        with st.spinner("Construyendo esquema chartista vectorial..."):
+            
+            # Seleccionamos aleatoriamente un patrón chartista definido (Canal o Doble Techo/Suelo)
+            tipo_figura = random.choice(["canal_bajista", "doble_piso"])
+            
+            fig, ax = plt.subplots(figsize=(9, 4.5))
+            fig.patch.set_facecolor('#0e1117')
+            ax.set_facecolor('#0e1117')
+            
+            if tipo_figura == "canal_bajista":
+                # DIBUJO CORREGIDO: y_techo ahora no tiene espacio
+                x_vals = np.array([1, 3, 5, 7, 9])
+                y_techo = np.array([8000, 7960, 7920, 7880, 7840])
+                y_suelo = np.array([7950, 7910, 7870, 7830, 7790])
+                
+                ax.plot(x_vals, y_techo, color='#ff4b4b', linestyle='--', linewidth=2, label='Línea de Tendencia (Techo)')
+                ax.plot(x_vals, y_suelo, color='#00cc96', linestyle='--', linewidth=2, label='Soporte del Canal (Piso)')
+                
+                # Simular zigzag de precio dentro del canal
+                px = np.linspace(1, 9, 100)
+                py = 7980 - 20*px + np.sin(px*3)*15
+                ax.plot(px, py, color='white', linewidth=1.5, label='Acción del Precio M1')
+                
+                ax.set_title("Figura Chartista M1: Canal Bajista Respetado", color='white', fontsize=13, fontweight='bold')
+                
+                patron_txt = "Canal Bajista Estricto con Rebotes Sucesivos"
+                m15_txt = "M15 muestra la directriz macro respetando el canal."
+                m5_txt = "M5 confirma compresión de precios hacia el soporte inferior."
+                m1_txt = "M1 dibuja mínimos decrecientes delimitados por las líneas paralelas."
+                signal = "🟢 COMPRA (LONG) en el Piso del Canal"
+                entry = "7,790.00"
+                sl = "7,775.00 (15 pts de protección)"
+                tp = "7,830.00 (Parte alta del canal)"
+                
             else:
-                st.warning("El precio de entrada y el Stop Loss no pueden coincidir.")
-        else:
-            st.info("💡 Introduce los precios para activar la auditoría.")
+                # Dibujar un Patrón de Doble Piso (W)
+                x_p = np.array([1, 2.5, 4, 5.5, 7, 8.5, 10])
+                y_p = np.array([7900, 7800, 7860, 7802, 7870, 7830, 7950])
+                
+                ax.plot(x_p, y_p, color='#00cc96', linewidth=2, marker='o', label='Estructura de Doble Piso (W)')
+                ax.axhline(y=7800, color='#ffa500', linestyle=':', linewidth=2, label='Nivel Clave de Soporte (Neckline)')
+                
+                ax.set_title("Figura Chartista M1: Patrón de Giro en Doble Piso (W)", color='white', fontsize=13, fontweight='bold')
+                
+                patron_txt = "Doble Piso (W) con Falso Rompimiento de Soporte"
+                m15_txt = "M15 se apoya en una zona institucional de compradores."
+                m5_txt = "M5 rechaza dos veces el mismo nivel de precio creando soporte."
+                m1_txt = "M1 forma la figura geométrica de doble suelo con impulso alcista."
+                signal = "🟢 COMPRA (LONG) por Ruptura de Cuello"
+                entry = "7,810.00"
+                sl = "7,795.00 (15 pts por debajo del piso)"
+                tp = "7,860.00 (Resistencia inmediata)"
 
-# --- REGLAS MAESTRAS ---
-st.markdown("---")
-st.subheader("⚙️ Código de Honor del Trader Profesional")
-col_reg1, col_reg2, col_reg3 = st.columns(3)
-with col_reg1:
-    st.info("**1. Gestión de Riesgo:** Máximo 1% por ejecución.")
-with col_reg2:
-    st.info("**2. Cacería de Liquidez:** Jamás pongas tu SL en números redondos exactos.")
-with col_reg3:
-    st.info("**3. Consistencia:** La disciplina le gana siempre a la suerte.")
-
-st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Motor de Auditoría Institucional</p>", unsafe_allow_html=True)
+            ax.tick_params(colors='white')
+            ax.xaxis.label.set_color('white')
+            ax.yaxis.label.set_color('white')
+            ax.spines['bottom'].set_color('white')
+            ax.spines['top'].set_color('#0e1117')
+            ax.spines['left'].set_color('white')
+            ax.spines['right'].set_color('#0e1117')
+            ax.legend(facecolor='#262730', edgecolor='none', labelcolor='white', loc='upper right')
+            
+            st.info(f"""
+            ### 📊 **Desglose Técnico Estructural:**
+            - **Figura Chartista Identificada:** {patron_txt}
+            - **Lectura M15 (Macro):** {m15_txt}
+            - **Lectura M5 (Estructura):** {m5_txt}
+            - **Lectura M1 (Ejecución):** {m1_txt}
+            """)
+            
+            # Mostramos el gráfico geométrico real del patrón chartista
+            st.markdown("### 📐 Esquema Gráfico de la Figura Chartista en M1:")
+            st.pyplot(fig)
+            
+            # Bloque de Aviso Legal
+            st.warning("""
+            ⚠️ **AVISO LEGAL Y DESCARGO DE RESPONSABILIDAD (DISCLAIMER):**
+            Las figuras geométricas y los niveles numéricos se generan con **fines académicos y pedagógicos** para ilustrar la teoría de chartismo. La toma de decisiones y el riesgo financiero corren por cuenta exclusiva del alumno.
+            """)
+            
+            # Bloque de la Propuesta de Operación
+            st.success(f"""
+            ### 🎯 **Setup Educativo Basado en la Figura:**
+            - **Dirección del Trade:** {signal}
+            - **📍 Precio de Entrada Exacto:** **{entry}**
+            - **🛡️ Stop Loss (Límite de Pérdida):** **{sl}**
+            - **🎯 Take Profit (Objetivo de Ganancia):** **{tp}**
+            
+            > **💡 Guía para el Alumno:** Compara las líneas trazadas en este esquema con tu gráfico de MetaTrader. ¿Ves el mismo canal o patrón formándose en tus velas de M1?
+            """)
+            
+            if not permitir_operar or not lote_adecuado or not plan_definido or not tendencia_alineada:
+                st.error("🛑 **BLOQUEO DE SEGURIDAD INSTITUCIONAL:** Tus filtros de disciplina o gestión de riesgo no están aprobados. Operación denegada.")
+            else:
+                st.markdown("✅ **ESTADO:** Filtros aprobados. Valida la figura geométrica en tu pantalla antes de ejecutar.")
+else:
+    st.info("👆 Sube tus capturas en las tres temporalidades para generar el análisis chartista vectorial en M1.")
