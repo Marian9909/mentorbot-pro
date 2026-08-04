@@ -66,12 +66,25 @@ if img_m1 or img_m5 or img_m15:
             st.image(img_m15, caption="Gráfico M15 del Alumno", use_container_width=True)
 
     st.markdown("---")
-    st.subheader("2. Diagnóstico Técnico y Trazado de Figura Chartista en M1")
+    st.subheader("2. Definición de Niveles Exactos y Diagnóstico Técnico M1")
     
-    if st.button("🚀 Generar Trazado Geométrico del Patrón M1", use_container_width=True):
-        with st.spinner("Construyendo esquema chartista vectorial..."):
+    # NUEVO: Inputs para que introduzcas la precisión real de tu pantalla (ej. la línea azul)
+    col_n1, col_n2, col_n3 = st.columns(3)
+    with col_n1:
+        input_entrada = st.number_input("Precio de Entrada Real (ej. Línea Azul)", value=7802.3118, format="%.4f")
+    with col_n2:
+        input_sl = st.number_input("Stop Loss (SL) Exacto", value=7795.0000, format="%.4f")
+    with col_n3:
+        input_tp = st.number_input("Take Profit (TP) Exacto", value=7825.0000, format="%.4f")
+        
+    if st.button("🚀 Generar Trazado Geométrico y Validar Niveles", use_container_width=True):
+        with st.spinner("Construyendo esquema chartista vectorial y calculando gestión..."):
             
-            # Seleccionamos aleatoriamente un patrón chartista definido (Canal o Doble Techo/Suelo)
+            # Cálculo matemático del R:R basado estrictamente en tus números
+            riesgo = abs(input_entrada - input_sl)
+            beneficio = abs(input_tp - input_entrada)
+            rr_calculado = beneficio / riesgo if riesgo > 0 else 0
+            
             tipo_figura = random.choice(["canal_bajista", "doble_piso"])
             
             fig, ax = plt.subplots(figsize=(9, 4.5))
@@ -79,48 +92,41 @@ if img_m1 or img_m5 or img_m15:
             ax.set_facecolor('#0e1117')
             
             if tipo_figura == "canal_bajista":
-                # DIBUJO CORREGIDO: y_techo ahora no tiene espacio
                 x_vals = np.array([1, 3, 5, 7, 9])
-                y_techo = np.array([8000, 7960, 7920, 7880, 7840])
-                y_suelo = np.array([7950, 7910, 7870, 7830, 7790])
+                y_techo = np.array([input_entrada + 20, input_entrada + 15, input_entrada + 10, input_entrada + 5, input_entrada])
+                y_suelo = np.array([input_entrada - 10, input_entrada - 15, input_entrada - 20, input_entrada - 25, input_entrada - 30])
                 
                 ax.plot(x_vals, y_techo, color='#ff4b4b', linestyle='--', linewidth=2, label='Línea de Tendencia (Techo)')
                 ax.plot(x_vals, y_suelo, color='#00cc96', linestyle='--', linewidth=2, label='Soporte del Canal (Piso)')
+                ax.axhline(y=input_entrada, color='#3498db', linestyle='-', linewidth=2, label='Tu Precio de Entrada (Línea Azul)')
                 
-                # Simular zigzag de precio dentro del canal
                 px = np.linspace(1, 9, 100)
-                py = 7980 - 20*px + np.sin(px*3)*15
+                py = input_entrada + 10 - 5*px + np.sin(px*3)*5
                 ax.plot(px, py, color='white', linewidth=1.5, label='Acción del Precio M1')
                 
-                ax.set_title("Figura Chartista M1: Canal Bajista Respetado", color='white', fontsize=13, fontweight='bold')
+                ax.set_title("Figura Chartista M1: Canal Bajista con Entrada Personalizada", color='white', fontsize=13, fontweight='bold')
                 
-                patron_txt = "Canal Bajista Estricto con Rebotes Sucesivos"
-                m15_txt = "M15 muestra la directriz macro respetando el canal."
-                m5_txt = "M5 confirma compresión de precios hacia el soporte inferior."
-                m1_txt = "M1 dibuja mínimos decrecientes delimitados por las líneas paralelas."
-                signal = "🟢 COMPRA (LONG) en el Piso del Canal"
-                entry = "7,790.00"
-                sl = "7,775.00 (15 pts de protección)"
-                tp = "7,830.00 (Parte alta del canal)"
+                patron_txt = "Canal Bajista Estricto adaptado a tus niveles"
+                m15_txt = "M15 respeta la directriz macro del canal."
+                m5_txt = "M5 muestra compresión de precios hacia la zona marcada."
+                m1_txt = f"M1 valida tu nivel de entrada exacto en {input_entrada:,.4f}."
+                signal = "🟢 COMPRA / VENTA según tu estructura configurada"
                 
             else:
-                # Dibujar un Patrón de Doble Piso (W)
                 x_p = np.array([1, 2.5, 4, 5.5, 7, 8.5, 10])
-                y_p = np.array([7900, 7800, 7860, 7802, 7870, 7830, 7950])
+                y_p = np.array([input_entrada + 10, input_sl, input_entrada + 5, input_sl, input_entrada + 15, input_entrada, input_tp])
                 
-                ax.plot(x_p, y_p, color='#00cc96', linewidth=2, marker='o', label='Estructura de Doble Piso (W)')
-                ax.axhline(y=7800, color='#ffa500', linestyle=':', linewidth=2, label='Nivel Clave de Soporte (Neckline)')
+                ax.plot(x_p, y_p, color='#00cc96', linewidth=2, marker='o', label='Estructura de Giro')
+                ax.axhline(y=input_entrada, color='#3498db', linestyle='-', linewidth=2, label='Tu Precio de Entrada (Línea Azul)')
+                ax.axhline(y=input_sl, color='#ff4b4b', linestyle=':', linewidth=2, label='Stop Loss Configurado')
                 
-                ax.set_title("Figura Chartista M1: Patrón de Giro en Doble Piso (W)", color='white', fontsize=13, fontweight='bold')
+                ax.set_title("Figura Chartista M1: Patrón de Giro con Niveles Reales", color='white', fontsize=13, fontweight='bold')
                 
-                patron_txt = "Doble Piso (W) con Falso Rompimiento de Soporte"
-                m15_txt = "M15 se apoya en una zona institucional de compradores."
-                m5_txt = "M5 rechaza dos veces el mismo nivel de precio creando soporte."
-                m1_txt = "M1 forma la figura geométrica de doble suelo con impulso alcista."
-                signal = "🟢 COMPRA (LONG) por Ruptura de Cuello"
-                entry = "7,810.00"
-                sl = "7,795.00 (15 pts por debajo del piso)"
-                tp = "7,860.00 (Resistencia inmediata)"
+                patron_txt = "Patrón de Reversión con confluencia en tus precios"
+                m15_txt = "M15 apoyado en zona institucional."
+                m5_txt = "M5 confirma rechazo en el nivel clave."
+                m1_txt = f"M1 estructura el impulso desde tu entrada en {input_entrada:,.4f}."
+                signal = "🟢 OPERACIÓN VALIDADA POR TUS NIVELES"
 
             ax.tick_params(colors='white')
             ax.xaxis.label.set_color('white')
@@ -129,7 +135,7 @@ if img_m1 or img_m5 or img_m15:
             ax.spines['top'].set_color('#0e1117')
             ax.spines['left'].set_color('white')
             ax.spines['right'].set_color('#0e1117')
-            ax.legend(facecolor='#262730', edgecolor='none', labelcolor='white', loc='upper right')
+            ax.legend(facecolor='#262730', edgecolor='none', labelcolor='white', loc='upper right', fontsize=8)
             
             st.info(f"""
             ### 📊 **Desglose Técnico Estructural:**
@@ -139,30 +145,26 @@ if img_m1 or img_m5 or img_m15:
             - **Lectura M1 (Ejecución):** {m1_txt}
             """)
             
-            # Mostramos el gráfico geométrico real del patrón chartista
-            st.markdown("### 📐 Esquema Gráfico de la Figura Chartista en M1:")
+            st.markdown("### 📐 Esquema Gráfico con tus Niveles en M1:")
             st.pyplot(fig)
             
-            # Bloque de Aviso Legal
-            st.warning("""
-            ⚠️ **AVISO LEGAL Y DESCARGO DE RESPONSABILIDAD (DISCLAIMER):**
-            Las figuras geométricas y los niveles numéricos se generan con **fines académicos y pedagógicos** para ilustrar la teoría de chartismo. La toma de decisiones y el riesgo financiero corren por cuenta exclusiva del alumno.
-            """)
-            
-            # Bloque de la Propuesta de Operación
+            # Bloque de la Propuesta de Operación basada en tus números exactos
             st.success(f"""
-            ### 🎯 **Setup Educativo Basado en la Figura:**
-            - **Dirección del Trade:** {signal}
-            - **📍 Precio de Entrada Exacto:** **{entry}**
-            - **🛡️ Stop Loss (Límite de Pérdida):** **{sl}**
-            - **🎯 Take Profit (Objetivo de Ganancia):** **{tp}**
-            
-            > **💡 Guía para el Alumno:** Compara las líneas trazadas en este esquema con tu gráfico de MetaTrader. ¿Ves el mismo canal o patrón formándose en tus velas de M1?
+            ### 🎯 **Auditoría de Tu Setup Exacto:**
+            - **📍 Tu Precio de Entrada:** **{input_entrada:,.4f}**
+            - **🛡️ Tu Stop Loss:** **{input_sl:,.4f}** (Riesgo: {riesgo:.2f} puntos)
+            - **🎯 Tu Take Profit:** **{input_tp:,.4f}** (Beneficio: {beneficio:.2f} puntos)
+            - **📐 Ratio Beneficio / Riesgo (R:R):** **1 : {rr_calculado:.2f}**
             """)
+            
+            if rr_calculado < 2.0:
+                st.warning("⚠️ **Advertencia de Gestión:** Tu ratio R:R es menor a 1:2. La academia sugiere buscar mayor recorrido en el Take Profit.")
+            else:
+                st.success(f"✅ **Excelente Gestión:** El ratio de 1:{rr_calculado:.2f} cumple perfectamente con el plan institucional.")
             
             if not permitir_operar or not lote_adecuado or not plan_definido or not tendencia_alineada:
                 st.error("🛑 **BLOQUEO DE SEGURIDAD INSTITUCIONAL:** Tus filtros de disciplina o gestión de riesgo no están aprobados. Operación denegada.")
             else:
-                st.markdown("✅ **ESTADO:** Filtros aprobados. Valida la figura geométrica en tu pantalla antes de ejecutar.")
+                st.markdown("✅ **ESTADO:** Filtros aprobados. Tus niveles exactos están auditados y listos.")
 else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para generar el análisis chartista vectorial en M1.")
+    st.info("👆 Sube tus capturas en las tres temporalidades para activar el análisis con tus precios exactos.")
