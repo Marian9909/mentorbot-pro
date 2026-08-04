@@ -1,5 +1,4 @@
 streamlit
-Pillow
-numpy
+streamlit-drawable-canvas
+PIL
 pandas
-yfinance
