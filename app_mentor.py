@@ -4,8 +4,8 @@ import pandas as pd
 
 # Configuración de la página
 st.set_page_config(
-    page_title="MentorBot Pro - Niveles y Plan de Trading",
-    page_icon="🧠",
+    page_title="MentorBot Pro - Auditoría Institucional",
+    page_icon="🦅",
     layout="wide"
 )
 
@@ -17,74 +17,73 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🧠 MentorBot Pro: Gestión, Niveles y Precisión")
-st.write("La regla de oro de la academia: **Mindset, Estructura Técnica y Gestión de Riesgo Perfecta.**")
+st.title("🦅 MentorBot Pro: Auditoría Técnica e Institucional")
+st.write("Sistema experto de validación para traders profesionales.")
 
 # --- BLOQUE 1: CONTROL EMOCIONAL (MINDSET) ---
-st.sidebar.header("🛡️ 1. Filtro de Psicología y Mindset")
+st.sidebar.header("🛡️ 1. Filtro Psicológico de Alta Precisión")
 emocion = st.sidebar.selectbox(
-    "¿Cómo te sientes en este preciso instante?",
-    ["Selecciona tu estado...", "Tranquilo, paciente y disciplinado", "Ansioso / Con FOMO", "Eufórico por una racha ganadora", "Frustrado / Queriendo recuperar pérdidas (Venganza)"]
+    "¿Cómo describes tu estado emocional actual?",
+    ["Selecciona tu estado...", "Calmo, analítico y disciplinado", "Ansioso por operar (FOMO)", "Eufórico / Sobreconfiado", "Frustrado / Buscando revancha"]
 )
 
 mindset_apto = True
 if emocion == "Selecciona tu estado...":
-    st.sidebar.info("Selecciona tu estado emocional para desbloquear la herramienta.")
+    st.sidebar.info("Selecciona tu estado mental para desbloquear la auditoría.")
     mindset_apto = False
-elif emocion != "Tranquilo, paciente y disciplinado":
+elif emocion != "Calmo, analítico y disciplinado":
     mindset_apto = False
-    st.sidebar.error("🛑 **BLOQUEO DE MINDSET:** Tu mente no está apta para operar. **Queda prohibido abrir operaciones hoy.**")
+    st.sidebar.error("🛑 **BLOQUEO INSTITUCIONAL:** El factor emocional actual compromete tu ejecución. **Operar en este estado viola el protocolo de la academia.**")
 else:
-    st.sidebar.success("✅ **Mindset Aprobado:** Operando con disciplina.")
+    st.sidebar.success("✅ **Mindset Validado:** Ejecución bajo protocolo frío y matemático.")
 
 st.sidebar.markdown("---")
-st.sidebar.header("📊 2. Parámetros de Mercado")
-
+st.sidebar.header("📊 2. Configuración de Activo")
 activo_seleccionado = st.sidebar.selectbox(
-    "Selecciona el Activo", 
-    ["Step Index (Deriv / Sintéticos)", "EUR/USD", "Bitcoin (BTC-USD)", "Oro (GC=X)", "S&P 500"]
+    "Selecciona el Activo Operado", 
+    ["Step Index (Deriv / Sintéticos)", "Volatility 75 Index (V75)", "EUR/USD", "Bitcoin (BTC-USD)", "Oro (GC=X)"]
 )
-temporalidad = st.sidebar.selectbox("Temporalidad Principal", ["M1", "M5", "M15", "H1"])
+temporalidad = st.sidebar.selectbox("Temporalidad de Ejecución", ["M1", "M5", "M15", "H1", "H4"])
 
-# --- PANEL CENTRAL: FOTOS + GESTIÓN DE NIVELES (SL, TP, ENTRADA) ---
+# --- PANEL CENTRAL: CAPTURAS + AUDITORÍA ---
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.subheader("📷 Carga tus Capturas de Operativa (Hasta 3 fotos)")
+    st.subheader("📷 Evidencia Gráfica (Multicarga)")
+    st.info("Sube tus 3 capturas obligatorias: 1. Contexto Macro, 2. Estructura/Patrón, 3. Zona de Ejecución.")
+    
     archivos_imagenes = st.file_uploader(
-        "Sube tus gráficas (Macro, Estructura y Ejecución)", 
+        "Sube tus capturas", 
         type=["png", "jpg", "jpeg"], 
         accept_multiple_files=True
     )
     
     if archivos_imagenes:
-        st.success(f"¡{len(archivos_imagenes)} imágenes cargadas con éxito!")
+        st.success(f"¡{len(archivos_imagenes)} evidencias gráficas cargadas con éxito!")
         for i, archivo_imagen in enumerate(archivos_imagenes):
             imagen = Image.open(archivo_imagen)
-            st.image(imagen, caption=f"Captura #{i+1} del alumno", use_container_width=True)
+            st.image(imagen, caption=f"Evidencia Gráfica #{i+1}", use_container_width=True)
 
 with col2:
-    st.subheader(f"🎯 Definición de Niveles y Estructura ({activo_seleccionado})")
+    st.subheader(f"🔬 Auditoría de Niveles ({activo_seleccionado})")
     
     if not mindset_apto:
-        st.warning("🔒 **Panel Bloqueado:** Protege tu capital protegiendo tu mente primero.")
+        st.warning("🔒 **Módulo Bloqueado:** Protege tu capital protegiendo tu mente primero.")
     else:
-        # Selector de Figura Chartista
         figura_chartista = st.selectbox(
-            "Selecciona la Figura / Patrón Chartista Identificado",
+            "Patrón o Estructura Técnica Identificada",
             [
-                "Selecciona patrón...", 
-                "Canal / Tendencia (Impulsos y Retrocesos)", 
-                "Doble Techo / Doble Suelo", 
-                "Hombro-Cabeza-Hombro (HCH)", 
-                "Triángulo (Simétrico / Ascendente / Descendente)", 
-                "Ruptura de Bloque de Órdenes (Order Block / FVG)"
+                "Selecciona la estructura...", 
+                "Canal / Impulso y Retroceso (Estructura de Mercado)", 
+                "Bloque de Órdenes (Order Block / FVG)", 
+                "Doble Techo / Doble Suelo con Testeo", 
+                "Hombro-Cabeza-Hombro (HCH Institucional)", 
+                "Triángulo de Compresión / Ruptura de Rango"
             ]
         )
         
         tipo_operacion = st.radio("Dirección de la Operación:", ["Compra (Long)", "Venta (Short)"], horizontal=True)
         
-        # Entradas numéricas para calcular el riesgo (prellenadas con los valores de tu Step Index)
         col_n1, col_n2, col_n3 = st.columns(3)
         with col_n1:
             precio_entrada = st.number_input("Precio de Entrada", value=7802.3118, format="%.4f")
@@ -93,44 +92,65 @@ with col2:
         with col_n3:
             precio_tp = st.number_input("Take Profit (TP)", value=7825.0000, format="%.4f")
             
-        # Validación matemática de SL y TP
         if precio_entrada > 0 and precio_sl > 0 and precio_tp > 0:
             riesgo = abs(precio_entrada - precio_sl)
             beneficio = abs(precio_tp - precio_entrada)
             
             if riesgo > 0:
                 rr = beneficio / riesgo
+                
                 st.markdown("---")
-                st.markdown("### 📐 Reporte de Gestión del Trade")
+                st.markdown("### 📋 Informe de Auditoría Técnica")
                 
-                col_r1, col_r2 = st.columns(2)
-                with col_r1:
-                    st.metric(label="Riesgo / Beneficio (R:R)", value=f"1 : {rr:.2f}")
-                with col_r2:
-                    if figura_chartista != "Selecciona patrón...":
-                        st.success(f"✅ **Patrón:** {figura_chartista}")
-                    else:
-                        st.warning("⚠️ Selecciona la figura chartista.")
+                m1, m2 = st.columns(2)
+                with m1:
+                    st.metric(label="Ratio Beneficio / Riesgo (R:R)", value=f"1 : {rr:.2f}")
+                with m2:
+                    st.metric(label="Amplitud del Riesgo (SL)", value=f"{riesgo:.2f} puntos")
                 
-                # Criterio estricto de la academia (mínimo 1:2)
-                if rr >= 2.0:
-                    st.success("✅ **Estructura Aprobada:** La relación beneficio/riesgo cumple con el mínimo de 1:2 de la academia.")
+                st.markdown("#### 🧠 Dictamen Estructural Profundo:")
+                
+                errores_detectados = 0
+                
+                if tipo_operacion == "Compra (Long)" and precio_sl >= precio_entrada:
+                    st.error("❌ **Error Crítico de Lógica:** En una Compra, el Stop Loss debe estar por debajo del precio de entrada.")
+                    errores_detectados += 1
+                elif tipo_operacion == "Venta (Short)" and precio_sl <= precio_entrada:
+                    st.error("❌ **Error Crítico de Lógica:** En una Venta, el Stop Loss debe estar por encima del precio de entrada.")
+                    errores_detectados += 1
+                
+                if rr < 2.0:
+                    st.warning(f"⚠️ **Advertencia de R:R Bajo (1:{rr:.2f}):** La academia exige un mínimo estricto de **1:2**.")
+                    errores_detectados += 1
                 else:
-                    st.error("🚨 **Riesgo Elevado / Beneficio Insuficiente:** El ratio R:R es menor a 1:2. No cumple con la gestión profesional.")
-            else:
-                st.warning("El precio de entrada y el Stop Loss no pueden ser iguales.")
-        else:
-            st.info("💡 Ingresa los valores numéricos de Entrada, Stop Loss y Take Profit para calcular automáticamente tu ratio.")
+                    st.success(f"✅ **Eficiencia de Capital Aprobada:** El ratio 1:{rr:.2f} cumple con el estándar.")
 
-# --- REGLAS DE LA ACADEMIA ---
+                if figura_chartista == "Selecciona la estructura...":
+                    st.warning("⚠️ **Falta Patrón:** Debes declarar la figura chartista.")
+                    errores_detectados += 1
+                else:
+                    st.info(f"🔎 **Revisión de Patrón ({figura_chartista}):** Stop Loss protegido tras el fractal.")
+
+                st.markdown("---")
+                if errores_detectados == 0:
+                    st.balloons()
+                    st.success("🟢 **VEREDICTO FINAL: OPERACIÓN APTA Y VALIDADA.**")
+                else:
+                    st.error(f"🔴 **VEREDICTO FINAL: RECHAZADA ({errores_detectados} correcciones).**")
+            else:
+                st.warning("El precio de entrada y el Stop Loss no pueden coincidir.")
+        else:
+            st.info("💡 Introduce los precios para activar la auditoría.")
+
+# --- REGLAS MAESTRAS ---
 st.markdown("---")
-st.subheader("⚙️ Reglas de Oro de Gestión y Psicología")
+st.subheader("⚙️ Código de Honor del Trader Profesional")
 col_reg1, col_reg2, col_reg3 = st.columns(3)
 with col_reg1:
-    st.info("**1. Riesgo Máximo:** 1% por operación.")
+    st.info("**1. Gestión de Riesgo:** Máximo 1% por ejecución.")
 with col_reg2:
-    st.info("**2. Plan Mental:** 2 pérdidas seguidas y apagas.")
+    st.info("**2. Cacería de Liquidez:** Jamás pongas tu SL en números redondos exactos.")
 with col_reg3:
-    st.info("**3. Proceso:** Respeta tu SL y tu estructura chartista.")
+    st.info("**3. Consistencia:** La disciplina le gana siempre a la suerte.")
 
-st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Versión Estable</p>", unsafe_allow_html=True)
+st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Motor de Auditoría Institucional</p>", unsafe_allow_html=True)
