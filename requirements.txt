@@ -1,4 +1,5 @@
 streamlit
 Pillow
-matplotlib
 numpy
+pandas
+yfinance
