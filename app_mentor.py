@@ -4,8 +4,8 @@ import pandas as pd
 
 # Configuración de la página
 st.set_page_config(
-    page_title="MentorBot Pro - Esencial & Directo",
-    page_icon="📈",
+    page_title="MentorBot Pro - Niveles y Plan de Trading",
+    page_icon="🧠",
     layout="wide"
 )
 
@@ -17,71 +17,120 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 MentorBot Pro: Análisis Directo y Esencial")
-st.write("Herramienta ágil y estable para la validación rápida de tu operativa.")
+st.title("🧠 MentorBot Pro: Gestión, Niveles y Precisión")
+st.write("La regla de oro de la academia: **Mindset, Estructura Técnica y Gestión de Riesgo Perfecta.**")
 
-# --- MENÚ LATERAL: CONTROL EMOCIONAL Y CONFIGURACIÓN ---
-st.sidebar.header("🛡️ Control Emocional")
+# --- BLOQUE 1: CONTROL EMOCIONAL (MINDSET) ---
+st.sidebar.header("🛡️ 1. Filtro de Psicología y Mindset")
 emocion = st.sidebar.selectbox(
-    "¿Cómo te sientes antes de operar?",
-    ["Tranquilo y Enfocado", "Ansioso / Con FOMO", "Frustrado por pérdidas previas", "Demasiado eufórico"]
+    "¿Cómo te sientes en este preciso instante?",
+    ["Selecciona tu estado...", "Tranquilo, paciente y disciplinado", "Ansioso / Con FOMO", "Eufórico por una racha ganadora", "Frustrado / Queriendo recuperar pérdidas (Venganza)"]
 )
 
-if emocion != "Tranquilo y Enfocado":
-    st.sidebar.warning("⚠️ **Alerta de Psicología:** El estado emocional no es óptimo. Reduce tu lotaje a la mitad.")
+mindset_apto = True
+if emocion == "Selecciona tu estado...":
+    st.sidebar.info("Selecciona tu estado emocional para desbloquear la herramienta.")
+    mindset_apto = False
+elif emocion != "Tranquilo, paciente y disciplinado":
+    mindset_apto = False
+    st.sidebar.error("🛑 **BLOQUEO DE MINDSET:** Tu mente no está apta para operar. **Queda prohibido abrir operaciones hoy.**")
+else:
+    st.sidebar.success("✅ **Mindset Aprobado:** Operando con disciplina.")
 
 st.sidebar.markdown("---")
-st.sidebar.header("📊 Parámetros de Mercado")
+st.sidebar.header("📊 2. Parámetros de Mercado")
 
 activo_seleccionado = st.sidebar.selectbox(
     "Selecciona el Activo", 
-    ["Step Index (Deriv)", "EUR/USD", "Bitcoin (BTC-USD)", "Oro (GC=X)", "S&P 500"]
+    ["Step Index (Deriv / Sintéticos)", "EUR/USD", "Bitcoin (BTC-USD)", "Oro (GC=X)", "S&P 500"]
 )
-
 temporalidad = st.sidebar.selectbox("Temporalidad Principal", ["M1", "M5", "M15", "H1"])
 
-# --- PANEL CENTRAL: MULTICARGA DE FOTOS Y GUÍA RÁPIDA ---
+# --- PANEL CENTRAL: FOTOS + GESTIÓN DE NIVELES (SL, TP, ENTRADA) ---
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.subheader("📷 Carga tus Capturas")
-    st.info("Sube hasta 3 capturas de tu análisis en TradingView o Deriv.")
-    
+    st.subheader("📷 Carga tus Capturas de Operativa (Hasta 3 fotos)")
     archivos_imagenes = st.file_uploader(
-        "Sube tus gráficas", 
+        "Sube tus gráficas (Macro, Estructura y Ejecución)", 
         type=["png", "jpg", "jpeg"], 
         accept_multiple_files=True
     )
     
     if archivos_imagenes:
-        st.success(f"¡Se han cargado {len(archivos_imagenes)} imágenes correctamente!")
+        st.success(f"¡{len(archivos_imagenes)} imágenes cargadas con éxito!")
         for i, archivo_imagen in enumerate(archivos_imagenes):
             imagen = Image.open(archivo_imagen)
             st.image(imagen, caption=f"Captura #{i+1} del alumno", use_container_width=True)
 
 with col2:
-    st.subheader(f"🔍 Diagnóstico Rápido ({activo_seleccionado})")
+    st.subheader(f"🎯 Definición de Niveles y Estructura ({activo_seleccionado})")
     
-    st.info("💡 **Guía de Validación Visual:** Observa directamente tu gráfica en TradingView / Deriv:")
-    
-    st.markdown("""
-    * **Estructura y Patrón:** Valida el comportamiento del precio en tu pantalla.
-    * **Punto de Entrada:** Respeta el nivel exacto que marcaste (ej. tu línea azul en Step Index).
-    * **Stop Loss (SL):** Asegúrate de colocarlo protegido tras el último fractal.
-    * **Take Profit (TP):** Valida que tu objetivo cumpla con una relación de beneficio/riesgo mínima de **1:2**.
-    """)
-    
-    st.success("✅ **Checklist Operativo:** Si tus capturas muestran confluencia y tu gestión de riesgo es correcta, ejecuta con disciplina.")
+    if not mindset_apto:
+        st.warning("🔒 **Panel Bloqueado:** Protege tu capital protegiendo tu mente primero.")
+    else:
+        # Selector de Figura Chartista
+        figura_chartista = st.selectbox(
+            "Selecciona la Figura / Patrón Chartista Identificado",
+            [
+                "Selecciona patrón...", 
+                "Canal / Tendencia (Impulsos y Retrocesos)", 
+                "Doble Techo / Doble Suelo", 
+                "Hombro-Cabeza-Hombro (HCH)", 
+                "Triángulo (Simétrico / Ascendente / Descendente)", 
+                "Ruptura de Bloque de Órdenes (Order Block / FVG)"
+            ]
+        )
+        
+        tipo_operacion = st.radio("Dirección de la Operación:", ["Compra (Long)", "Venta (Short)"], horizontal=True)
+        
+        # Entradas numéricas para calcular el riesgo (prellenadas con los valores de tu Step Index)
+        col_n1, col_n2, col_n3 = st.columns(3)
+        with col_n1:
+            precio_entrada = st.number_input("Precio de Entrada", value=7802.3118, format="%.4f")
+        with col_n2:
+            precio_sl = st.number_input("Stop Loss (SL)", value=7795.0000, format="%.4f")
+        with col_n3:
+            precio_tp = st.number_input("Take Profit (TP)", value=7825.0000, format="%.4f")
+            
+        # Validación matemática de SL y TP
+        if precio_entrada > 0 and precio_sl > 0 and precio_tp > 0:
+            riesgo = abs(precio_entrada - precio_sl)
+            beneficio = abs(precio_tp - precio_entrada)
+            
+            if riesgo > 0:
+                rr = beneficio / riesgo
+                st.markdown("---")
+                st.markdown("### 📐 Reporte de Gestión del Trade")
+                
+                col_r1, col_r2 = st.columns(2)
+                with col_r1:
+                    st.metric(label="Riesgo / Beneficio (R:R)", value=f"1 : {rr:.2f}")
+                with col_r2:
+                    if figura_chartista != "Selecciona patrón...":
+                        st.success(f"✅ **Patrón:** {figura_chartista}")
+                    else:
+                        st.warning("⚠️ Selecciona la figura chartista.")
+                
+                # Criterio estricto de la academia (mínimo 1:2)
+                if rr >= 2.0:
+                    st.success("✅ **Estructura Aprobada:** La relación beneficio/riesgo cumple con el mínimo de 1:2 de la academia.")
+                else:
+                    st.error("🚨 **Riesgo Elevado / Beneficio Insuficiente:** El ratio R:R es menor a 1:2. No cumple con la gestión profesional.")
+            else:
+                st.warning("El precio de entrada y el Stop Loss no pueden ser iguales.")
+        else:
+            st.info("💡 Ingresa los valores numéricos de Entrada, Stop Loss y Take Profit para calcular automáticamente tu ratio.")
 
-# --- PLAN DE ACCIÓN Y RIESGO ---
+# --- REGLAS DE LA ACADEMIA ---
 st.markdown("---")
-st.subheader("⚙️ Estructura de Operación Recomendada")
+st.subheader("⚙️ Reglas de Oro de Gestión y Psicología")
 col_reg1, col_reg2, col_reg3 = st.columns(3)
 with col_reg1:
-    st.info("**Riesgo Permitido:** Máx. 1% de la cuenta")
+    st.info("**1. Riesgo Máximo:** 1% por operación.")
 with col_reg2:
-    st.info("**Gestión:** Relación Beneficio/Riesgo mínima 1:2")
+    st.info("**2. Plan Mental:** 2 pérdidas seguidas y apagas.")
 with col_reg3:
-    st.info("**Disciplina:** Respetar Stop Loss sin excepciones")
+    st.info("**3. Proceso:** Respeta tu SL y tu estructura chartista.")
 
-st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Versión Esencial</p>", unsafe_allow_html=True)
+st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Versión Estable</p>", unsafe_allow_html=True)
