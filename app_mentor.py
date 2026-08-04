@@ -1,11 +1,10 @@
 import streamlit as st
 from PIL import Image
 import pandas as pd
-from streamlit_drawable_canvas import st_canvas
 
 # Configuración de la página
 st.set_page_config(
-    page_title="MentorBot Pro - Dibujo y Análisis Visual",
+    page_title="MentorBot Pro - Esencial & Directo",
     page_icon="📈",
     layout="wide"
 )
@@ -18,8 +17,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 MentorBot Pro: Trazado y Análisis Visual Directo")
-st.write("Herramienta ágil con lienzo interactivo para marcar tus figuras chartistas en tiempo real.")
+st.title("🤖 MentorBot Pro: Análisis Directo y Esencial")
+st.write("Herramienta ágil y estable para la validación rápida de tu operativa.")
 
 # --- MENÚ LATERAL: CONTROL EMOCIONAL Y CONFIGURACIÓN ---
 st.sidebar.header("🛡️ Control Emocional")
@@ -41,7 +40,7 @@ activo_seleccionado = st.sidebar.selectbox(
 
 temporalidad = st.sidebar.selectbox("Temporalidad Principal", ["M1", "M5", "M15", "H1"])
 
-# --- PANEL CENTRAL: MULTICARGA DE FOTOS + LIENZO DE DIBUJO ---
+# --- PANEL CENTRAL: MULTICARGA DE FOTOS Y GUÍA RÁPIDA ---
 col1, col2 = st.columns([1, 1])
 
 with col1:
@@ -61,36 +60,18 @@ with col1:
             st.image(imagen, caption=f"Captura #{i+1} del alumno", use_container_width=True)
 
 with col2:
-    st.subheader(f"✏️ Trazado de Figura Chartista ({activo_seleccionado})")
-    st.info("Selecciona la herramienta y dibuja el patrón (canal, línea de tendencia o soporte) sobre el recuadro:")
+    st.subheader(f"🔍 Diagnóstico Rápido ({activo_seleccionado})")
     
-    # Controles para el lienzo de dibujo
-    drawing_mode = st.selectbox(
-        "Herramienta de dibujo:",
-        ("line", "rect", "freedraw", "transform")
-    )
+    st.info("💡 **Guía de Validación Visual:** Observa directamente tu gráfica en TradingView / Deriv:")
     
-    stroke_color = st.color_picker("Color del trazo:", "#00FF00")
-    stroke_width = st.slider("Grosor de línea:", 1, 10, 2)
-    
-    # Lienzo interactivo donde puedes trazar encima
-    canvas_result = st_canvas(
-        fill_color="rgba(0, 255, 0, 0.3)",
-        stroke_width=stroke_width,
-        stroke_color=stroke_color,
-        background_color="#1e1e1e",
-        height=300,
-        drawing_mode=drawing_mode,
-        key="canvas_patron",
-    )
-    
-    st.markdown("### 📋 Checklist de Validación Rápida")
     st.markdown("""
-    * **Estructura:** ¿El trazo coincide con los impulsos y retrocesos del Step Index?
-    * **Entrada y SL:** Valida visualmente que tu Stop Loss esté protegiendo el último fractal.
-    * **Ratio R:R:** Asegúrate de que el beneficio proyectado sea al menos el doble del riesgo.
+    * **Estructura y Patrón:** Valida el comportamiento del precio en tu pantalla.
+    * **Punto de Entrada:** Respeta el nivel exacto que marcaste (ej. tu línea azul en Step Index).
+    * **Stop Loss (SL):** Asegúrate de colocarlo protegido tras el último fractal.
+    * **Take Profit (TP):** Valida que tu objetivo cumpla con una relación de beneficio/riesgo mínima de **1:2**.
     """)
-    st.success("✅ **Listo para operar:** Mantén la disciplina y ejecuta de acuerdo a tu plan.")
+    
+    st.success("✅ **Checklist Operativo:** Si tus capturas muestran confluencia y tu gestión de riesgo es correcta, ejecuta con disciplina.")
 
 # --- PLAN DE ACCIÓN Y RIESGO ---
 st.markdown("---")
@@ -103,4 +84,4 @@ with col_reg2:
 with col_reg3:
     st.info("**Disciplina:** Respetar Stop Loss sin excepciones")
 
-st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Versión Visual y de Trazado Directo</p>", unsafe_allow_html=True)
+st.markdown("<br><p style='text-align: center; color: gray;'>Academia de Trading Profesional - Versión Esencial</p>", unsafe_allow_html=True)
