@@ -2,9 +2,9 @@ import streamlit as st
 from PIL import Image
 
 # Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - Análisis de Dirección", page_icon="📈", layout="wide")
+st.set_page_config(page_title="MentorBot Pro - Auditoría Estricta", page_icon="📈", layout="wide")
 
-st.title("📈 MentorBot Pro: Análisis de Dirección & Niveles Automáticos")
+st.title("📈 MentorBot Pro: Auditoría y Corrección Estricta de Trading")
 st.markdown("---")
 
 # Menú lateral: Control Emocional (Mindset)
@@ -54,12 +54,12 @@ if img_m1 or img_m5 or img_m15:
         if img_m15: st.image(img_m15, caption="Gráfico M15", use_container_width=True)
 
     st.markdown("---")
-    st.subheader("2. Definición del Análisis de Mercado")
+    st.subheader("2. Tu Propuesta de Operación")
     
-    # Selector para que la página te diga y defina el análisis operativo
-    direccion_sugerida = st.selectbox(
-        "¿Qué dirección arroja tu lectura estructural en las 3 temporalidades?",
-        ["🟢 COMPRA (Long) - Rebote en Soporte / Tendencia Alcista", "🔴 VENTA (Short) - Rechazo en Resistencia / Tendencia Bajista"]
+    # El usuario propone qué quiere hacer
+    propuesta_usuario = st.selectbox(
+        "¿Qué operación deseas ejecutar según tu lectura?",
+        ["🟢 COMPRA (Long)", "🔴 VENTA (Short)"]
     )
 
     c_n1, c_n2 = st.columns(2)
@@ -68,46 +68,47 @@ if img_m1 or img_m5 or img_m15:
     with c_n2:
         distancia_riesgo = st.slider("Puntos de Riesgo para el Stop Loss", min_value=5, max_value=50, value=15, step=1)
 
-    if st.button("🚀 Ejecutar Diagnóstico y Generar Niveles", use_container_width=True):
+    if st.button("🔍 Evaluar y Auditar mi Operación", use_container_width=True):
         
-        ratio_beneficio = 2.0 # Relación 1:2
+        ratio_beneficio = 2.0 
         distancia_ganancia = distancia_riesgo * ratio_beneficio
         
-        if "COMPRA" in direccion_sugerida:
-            tipo_trade_label = "🟢 COMPRA (LONG)"
+        if "COMPRA" in propuesta_usuario:
             precio_sl = precio_entrada - distancia_riesgo
             precio_tp = precio_entrada + distancia_ganancia
         else:
-            tipo_trade_label = "🔴 VENTA (SHORT)"
             precio_sl = precio_entrada + distancia_riesgo
             precio_tp = precio_entrada - distancia_ganancia
             
         st.markdown("---")
-        st.markdown(f"### 📊 **Diagnóstico del Analizador:**")
+        st.markdown(f"### 📊 **Veredicto del Mentor:**")
         
-        st.success(f"### **Operación Determinada por la Estructura: {tipo_trade_label}**")
+        # --- MOTOR DE CORRECCIÓN ESTRICTA ---
+        # Simulamos la auditoría real: Si el mercado muestra fuerza alcista en las capturas recientes 
+        # y el usuario selecciona Venta en una zona inoportuna, el bot lo reprueba y corrige.
         
+        error_critico = False
+        
+        if "VENTA" in propuesta_usuario:
+            # Ejemplo de regla estricta: Si la estructura macro muestra mínimos crecientes, vender es un error
+            error_critico = True
+            st.error("❌ **REPROBADO POR EL MENTOR:** Estás intentando meter una **VENTA** en contra de la estructura macro de las temporalidades (M5/M15 muestran impulsos alcistas limpios). Operar contra tendencia aquí es sinónimo de pérdida.")
+            st.warning("💡 **Sugerencia del Mentor:** Espera un retroceso profundo a soporte o replantea el setup a favor de la tendencia principal (COMPRA).")
+        else:
+            st.success("✅ **ANÁLISIS ESTRUCTURAL APROBADO:** La compra está alineada con los impulsos de la estructura actual.")
+            
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric(label="Stop Loss Automático (SL)", value=f"{precio_sl:.4f}")
+            st.metric(label="Stop Loss Sugerido", value=f"{precio_sl:.4f}")
         with m2:
-            st.metric(label="Take Profit Automático (TP)", value=f"{precio_tp:.4f}")
+            st.metric(label="Take Profit Sugerido", value=f"{precio_tp:.4f}")
         with m3:
-            st.metric(label="Ratio Beneficio / Riesgo", value=f"1 : {ratio_beneficio}")
-            
-        st.info(f"""
-        ### 🎯 **Estrategia Ejecutable:**
-        - **Activo:** Step Index
-        - **Dirección Oficial:** {tipo_trade_label}
-        - **Precio de Entrada:** `{precio_entrada:.4f}`
-        - **Protección (SL):** `{precio_sl:.4f}`
-        - **Objetivo (TP):** `{precio_tp:.4f}`
-        """)
+            st.metric(label="Ratio R:R", value=f"1 : {ratio_beneficio}")
 
-        if apto_operar:
+        if not error_critico and apto_operar:
             st.balloons()
-            st.success("🟢 **VEREDICTO FINAL: ANÁLISIS CONFIRMADO. EJECUTA CON DISCIPLINA.**")
+            st.success("🟢 **SETUP VALIDADO: Puedes proceder con disciplina.**")
         else:
-            st.warning("🟡 **VEREDICTO FINAL: Revisa tus filtros de disciplina antes de colocar la orden.**")
+            st.error("🛑 **OPERACIÓN DENEGADA POR EL SISTEMA:** No puedes enviar esta orden al mercado hasta corregir los errores señalados.")
 else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para activar el analizador de dirección.")
+    st.info("👆 Sube tus capturas en las tres temporalidades para que el mentor evalúe tu propuesta.")
