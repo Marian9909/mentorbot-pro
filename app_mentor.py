@@ -2,9 +2,9 @@ import streamlit as st
 from PIL import Image
 
 # Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - Auditoría Real", page_icon="📈", layout="wide")
+st.set_page_config(page_title="MentorBot Pro - SL y TP Automáticos", page_icon="📈", layout="wide")
 
-st.title("📈 MentorBot Pro: Auditoría Técnica y Gestión de Riesgo (Step Index)")
+st.title("📈 MentorBot Pro: Cálculo Automático de SL & TP (Step Index)")
 st.markdown("---")
 
 # Menú lateral: Control Emocional (Mindset)
@@ -15,7 +15,7 @@ emocion = st.sidebar.selectbox(
 )
 
 lote_adecuado = st.sidebar.checkbox("¿Mi lote respeta estrictamente la gestión de riesgo?")
-plan_definido = st.sidebar.checkbox("Tengo claro mi punto de salida (Stop Loss) si el mercado se equivoca")
+plan_definido = st.sidebar.checkbox("Tengo claro mi plan de salida si el mercado se equivoca")
 tendencia_alineada = st.sidebar.checkbox("He confirmado la estructura en las 3 temporalidades")
 
 if emocion != "Calmo y enfocado" or not lote_adecuado or not plan_definido or not tendencia_alineada:
@@ -54,63 +54,54 @@ if img_m1 or img_m5 or img_m15:
         if img_m15: st.image(img_m15, caption="Gráfico M15", use_container_width=True)
 
     st.markdown("---")
-    st.subheader("2. Calibración de Niveles en Vivo (Basado en tu pantalla de Deriv)")
+    st.subheader("2. Ingreso Rápido y Proyección Automática")
     
     tipo_operacion = st.radio("Dirección del Trade:", ["🟢 Compra (Long)", "🔴 Venta (Short)"], horizontal=True)
 
-    c_n1, c_n2, c_n3 = st.columns(3)
+    c_n1, c_n2 = st.columns(2)
     with c_n1:
-        # Precio actual que el usuario ve en su gráfica (ej. 7828.00)
-        precio_entrada = st.number_input("Precio de Entrada Real (Línea Azul)", value=7828.0000, format="%.4f")
+        # Solo ingresas tu precio de entrada real (ej. 7828.00)
+        precio_entrada = st.number_input("Precio de Entrada Real (Tu Línea en Deriv)", value=7828.0000, format="%.4f")
     with c_n2:
-        precio_sl = st.number_input("Stop Loss (SL) Exacto", value=7820.0000, format="%.4f")
-    with c_n3:
-        precio_tp = st.number_input("Take Profit (TP) Exacto", value=7845.0000, format="%.4f")
+        # Distancia de riesgo en puntos que tú decides arriesgar (ej. 15 o 20 puntos)
+        distancia_riesgo = st.slider("Puntos de Riesgo para el Stop Loss", min_value=5, max_value=50, value=15, step=1)
 
-    if st.button("🚀 Ejecutar Auditoría Estructural y de Riesgo", use_container_width=True):
+    if st.button("🚀 Calcular Niveles Óptimos y Auditar Riesgo", use_container_width=True):
         
-        # Cálculos matemáticos exactos sin inventar nada
-        riesgo = abs(precio_entrada - precio_sl)
-        beneficio = abs(precio_tp - precio_entrada)
-        rr = beneficio / riesgo if riesgo > 0 else 0
+        # La página calcula automáticamente el SL y el TP basados en un ratio de 1:2 (Beneficio doble al riesgo)
+        ratio_beneficio = 2.0 
+        distancia_ganancia = distancia_riesgo * ratio_beneficio
         
+        if "Compra" in tipo_operacion:
+            precio_sl = precio_entrada - distancia_riesgo
+            precio_tp = precio_entrada + distancia_ganancia
+        else:
+            precio_sl = precio_entrada + distancia_riesgo
+            precio_tp = precio_entrada - distancia_ganancia
+            
         st.markdown("---")
-        st.markdown("### 📊 **Resultado de la Auditoría Técnica:**")
+        st.markdown("### 📊 **Proyección Automática de la Página:**")
         
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric(label="Riesgo en Puntos", value=f"{riesgo:.2f}")
+            st.metric(label="Stop Loss Automático (SL)", value=f"{precio_sl:.4f}")
         with m2:
-            st.metric(label="Beneficio en Puntos", value=f"{beneficio:.2f}")
+            st.metric(label="Take Profit Automático (TP)", value=f"{precio_tp:.4f}")
         with m3:
-            st.metric(label="Ratio Beneficio / Riesgo (R:R)", value=f"1 : {rr:.2f}")
+            st.metric(label="Ratio Beneficio / Riesgo", value=f"1 : {ratio_beneficio}")
             
-        # Validaciones de lógica de mercado
-        errores = 0
-        if "Compra" in tipo_operacion:
-            if precio_sl >= precio_entrada:
-                st.error("❌ **Error de Lógica:** En una Compra, el Stop Loss debe estar por debajo del precio de entrada.")
-                errores += 1
-            if precio_tp <= precio_entrada:
-                st.error("❌ **Error de Lógica:** En una Compra, el Take Profit debe estar por encima del precio de entrada.")
-                errores += 1
-        else:
-            if precio_sl <= precio_entrada:
-                st.error("❌ **Error de Lógica:** En una Venta, el Stop Loss debe estar por encima del precio de entrada.")
-                errores += 1
-            if precio_tp >= precio_entrada:
-                st.error("❌ **Error de Lógica:** En una Venta, el Take Profit debe estar por debajo del precio de entrada.")
-                errores += 1
+        st.success(f"""
+        ### 🎯 **Resumen de la Orden para tu Broker:**
+        - **Dirección:** {tipo_operacion}
+        - **Entrada Registrada:** `{precio_entrada:.4f}`
+        - **Stop Loss Sugerido:** `{precio_sl:.4f}` ({distancia_riesgo} puntos de riesgo)
+        - **Take Profit Sugerido:** `{precio_tp:.4f}` ({distancia_ganancia} puntos de beneficio)
+        """)
 
-        if rr < 2.0:
-            st.warning(f"⚠️ **Advertencia de Gestión (1:{rr:.2f}):** La academia sugiere buscar un objetivo de beneficio de al menos el doble del riesgo.")
-        else:
-            st.success(f"✅ **Gestión Excelente:** El ratio de 1:{rr:.2f} cumple perfectamente con el plan institucional.")
-
-        if errores == 0 and rr >= 2.0 and apto_operar:
+        if apto_operar:
             st.balloons()
-            st.success("🟢 **VEREDICTO FINAL: SETUP VALIDADO. LISTO PARA EJECUTAR CON DISCIPLINA.**")
+            st.success("🟢 **VEREDICTO FINAL: NIVELES CALCULADOS Y VALIDADOS. LISTO PARA OPERAR.**")
         else:
-            st.warning("🟡 **VEREDICTO FINAL: Revisa los parámetros o la disciplina antes de abrir la operación.**")
+            st.warning("🟡 **VEREDICTO FINAL: Revisa tus filtros de disciplina antes de colocar la orden.**")
 else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para habilitar los campos de calibración de precios.")
+    st.info("👆 Sube tus capturas en las tres temporalidades para habilitar el generador automático de niveles.")
