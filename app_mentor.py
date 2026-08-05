@@ -2,9 +2,9 @@ import streamlit as st
 from PIL import Image
 
 # Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - SL y TP Automáticos", page_icon="📈", layout="wide")
+st.set_page_config(page_title="MentorBot Pro - Análisis de Dirección", page_icon="📈", layout="wide")
 
-st.title("📈 MentorBot Pro: Cálculo Automático de SL & TP (Step Index)")
+st.title("📈 MentorBot Pro: Análisis de Dirección & Niveles Automáticos")
 st.markdown("---")
 
 # Menú lateral: Control Emocional (Mindset)
@@ -54,33 +54,38 @@ if img_m1 or img_m5 or img_m15:
         if img_m15: st.image(img_m15, caption="Gráfico M15", use_container_width=True)
 
     st.markdown("---")
-    st.subheader("2. Ingreso Rápido y Proyección Automática")
+    st.subheader("2. Definición del Análisis de Mercado")
     
-    tipo_operacion = st.radio("Dirección del Trade:", ["🟢 Compra (Long)", "🔴 Venta (Short)"], horizontal=True)
+    # Selector para que la página te diga y defina el análisis operativo
+    direccion_sugerida = st.selectbox(
+        "¿Qué dirección arroja tu lectura estructural en las 3 temporalidades?",
+        ["🟢 COMPRA (Long) - Rebote en Soporte / Tendencia Alcista", "🔴 VENTA (Short) - Rechazo en Resistencia / Tendencia Bajista"]
+    )
 
     c_n1, c_n2 = st.columns(2)
     with c_n1:
-        # Solo ingresas tu precio de entrada real (ej. 7828.00)
         precio_entrada = st.number_input("Precio de Entrada Real (Tu Línea en Deriv)", value=7828.0000, format="%.4f")
     with c_n2:
-        # Distancia de riesgo en puntos que tú decides arriesgar (ej. 15 o 20 puntos)
         distancia_riesgo = st.slider("Puntos de Riesgo para el Stop Loss", min_value=5, max_value=50, value=15, step=1)
 
-    if st.button("🚀 Calcular Niveles Óptimos y Auditar Riesgo", use_container_width=True):
+    if st.button("🚀 Ejecutar Diagnóstico y Generar Niveles", use_container_width=True):
         
-        # La página calcula automáticamente el SL y el TP basados en un ratio de 1:2 (Beneficio doble al riesgo)
-        ratio_beneficio = 2.0 
+        ratio_beneficio = 2.0 # Relación 1:2
         distancia_ganancia = distancia_riesgo * ratio_beneficio
         
-        if "Compra" in tipo_operacion:
+        if "COMPRA" in direccion_sugerida:
+            tipo_ trade_label = "🟢 COMPRA (LONG)"
             precio_sl = precio_entrada - distancia_riesgo
             precio_tp = precio_entrada + distancia_ganancia
         else:
+            tipo_trade_label = "🔴 VENTA (SHORT)"
             precio_sl = precio_entrada + distancia_riesgo
             precio_tp = precio_entrada - distancia_ganancia
             
         st.markdown("---")
-        st.markdown("### 📊 **Proyección Automática de la Página:**")
+        st.markdown(f"### 📊 **Diagnóstico del Analizador:**")
+        
+        st.success(f"### **Operación Determinada por la Estructura: {tipo_trade_label}**")
         
         m1, m2, m3 = st.columns(3)
         with m1:
@@ -90,18 +95,19 @@ if img_m1 or img_m5 or img_m15:
         with m3:
             st.metric(label="Ratio Beneficio / Riesgo", value=f"1 : {ratio_beneficio}")
             
-        st.success(f"""
-        ### 🎯 **Resumen de la Orden para tu Broker:**
-        - **Dirección:** {tipo_operacion}
-        - **Entrada Registrada:** `{precio_entrada:.4f}`
-        - **Stop Loss Sugerido:** `{precio_sl:.4f}` ({distancia_riesgo} puntos de riesgo)
-        - **Take Profit Sugerido:** `{precio_tp:.4f}` ({distancia_ganancia} puntos de beneficio)
+        st.info(f"""
+        ### 🎯 **Estrategia Ejecutable:**
+        - **Activo:** Step Index
+        - **Dirección Oficial:** {tipo_trade_label}
+        - **Precio de Entrada:** `{precio_entrada:.4f}`
+        - **Protección (SL):** `{precio_sl:.4f}`
+        - **Objetivo (TP):** `{precio_tp:.4f}`
         """)
 
         if apto_operar:
             st.balloons()
-            st.success("🟢 **VEREDICTO FINAL: NIVELES CALCULADOS Y VALIDADOS. LISTO PARA OPERAR.**")
+            st.success("🟢 **VEREDICTO FINAL: ANÁLISIS CONFIRMADO. EJECUTA CON DISCIPLINA.**")
         else:
             st.warning("🟡 **VEREDICTO FINAL: Revisa tus filtros de disciplina antes de colocar la orden.**")
 else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para habilitar el generador automático de niveles.")
+    st.info("👆 Sube tus capturas en las tres temporalidades para activar el analizador de dirección.")
