@@ -74,7 +74,7 @@ if img_m1 or img_m5 or img_m15:
         distancia_ganancia = distancia_riesgo * ratio_beneficio
         
         if "COMPRA" in direccion_sugerida:
-            tipo_ trade_label = "🟢 COMPRA (LONG)"
+            tipo_trade_label = "🟢 COMPRA (LONG)"
             precio_sl = precio_entrada - distancia_riesgo
             precio_tp = precio_entrada + distancia_ganancia
         else:
