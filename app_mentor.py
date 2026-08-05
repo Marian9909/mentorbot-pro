@@ -1,19 +1,16 @@
 import streamlit as st
 from PIL import Image
-import random
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 # Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - AI & Chartism Engine", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="MentorBot Pro - Análisis Técnico Real", page_icon="📈", layout="wide")
 
-st.title("🤖 MentorBot Pro: Motor de Análisis Estructural con IA")
+st.title("📈 MentorBot Pro: Análisis Técnico y Estructural en Vivo")
 st.markdown("---")
 
-# Menú lateral para el control emocional (Mindset) y Carga de Datos de IA
-st.sidebar.header("🧠 Control Emocional & IA")
-st.sidebar.markdown("Antes de evaluar el mercado, valida tu disciplina:")
+# Menú lateral para el control emocional (Mindset)
+st.sidebar.header("🧠 Control Emocional (Checklist)")
+st.sidebar.markdown("Antes de operar, evalúa tu disciplina:")
 
 emocion_actual = st.sidebar.selectbox(
     "¿Cómo te sientes en este momento?",
@@ -26,19 +23,19 @@ tendencia_alineada = st.sidebar.checkbox("He confirmado la estructura en las 3 t
 
 # Alerta de Mindset
 if emocion_actual in ["Frustrado por pérdidas recientes", "Ansioso / Con ganas de recuperar rápido"]:
-    st.sidebar.error("🚨 **ALERTA DE MINDSET:** Detectamos señales de posible operativa por venganza o ansiedad. El mercado no perdonará tus emociones hoy. Te sugerimos cerrar la plataforma 15 minutos.")
+    st.sidebar.error("🚨 **ALERTA DE MINDSET:** Detectamos señales de posible operativa por venganza o ansiedad. Te sugerimos cerrar la plataforma 15 minutos.")
     permitir_operar = False
 else:
     st.sidebar.success("✅ Estado mental apto para operar con disciplina.")
     permitir_operar = True
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("📂 Base de Datos para la IA")
-archivo_csv = st.sidebar.file_uploader("Sube tu histórico CSV (Step Index)", type=["csv"])
+st.sidebar.subheader("📂 Carga de Datos Históricos (Opcional)")
+archivo_csv = st.sidebar.file_uploader("Sube tu CSV de precios (Step Index)", type=["csv"])
 
 # Interfaz Principal: Distribución en 3 columnas para M1, M5 y M15
-st.subheader("1. Sube tus capturas de pantalla por Temporalidad")
-st.markdown("Carga las imágenes correspondientes a M1, M5 y M15:")
+st.subheader("1. Sube tus 3 capturas de pantalla")
+st.markdown("Carga las evidencias gráficas de tus temporalidades:")
 
 col1, col2, col3 = st.columns(3)
 
@@ -54,19 +51,19 @@ with col3:
     st.markdown("### ⏱️ Temporalidad M15 (Macro)")
     img_m15 = st.file_uploader("Sube gráfico M15", type=["png", "jpg", "jpeg"], key="m15")
 
-# Procesamiento si se subió el CSV de histórico
-datos_historicos = None
+# Procesamiento de datos reales si se sube el archivo CSV de precios
+df_precios = None
 if archivo_csv is not None:
     try:
-        datos_historicos = pd.read_csv(archivo_csv)
-        st.sidebar.success("✅ Histórico cargado para entrenamiento de IA.")
+        df_precios = pd.read_csv(archivo_csv)
+        st.sidebar.success("✅ Histórico de precios cargado correctamente.")
     except Exception as e:
-        st.sidebar.error(f"Error al leer el CSV: {e}")
+        st.sidebar.error(f"Error al procesar el archivo: {e}")
 
 # Mostrar las imágenes si al menos una ha sido cargada
 if img_m1 or img_m5 or img_m15:
     st.markdown("---")
-    st.subheader("📸 Vista previa de gráficos sincronizados")
+    st.subheader("📸 Vista previa de tus evidencias gráficas")
     
     prev_col1, prev_col2, prev_col3 = st.columns(3)
     with prev_col1:
@@ -80,117 +77,69 @@ if img_m1 or img_m5 or img_m15:
             st.image(img_m15, caption="Gráfico M15 del Alumno", use_container_width=True)
 
     st.markdown("---")
-    st.subheader("2. Diagnóstico Inteligente y Trazado de Figura Chartista M1")
+    st.subheader("2. Definición de Niveles y Análisis Técnico Real")
     
-    if st.button("🚀 Ejecutar Análisis Predictivo de IA", use_container_width=True):
-        with st.spinner("La IA está evaluando la confluencia de patrones y el histórico..."):
-            
-            # Simulación de cálculo de probabilidad basado en IA / Datos
-            if datos_historicos is not None:
-                probabilidad_ia = random.randint(75, 94) # Si hay datos reales, la certeza sube
-                metodo_eval = "Modelo entrenado con histórico CSV del Step Index"
-            else:
-                probabilidad_ia = random.randint(62, 81) # Sin CSV, usa análisis heurístico base
-                metodo_eval = "Análisis heurístico de patrones visuales M1/M5/M15"
+    tipo_operacion = st.radio("Dirección del Trade:", ["🟢 Compra (Long)", "🔴 Venta (Short)"], horizontal=True)
 
-            tipo_figura = random.choice(["canal_bajista", "canal_alcista", "doble_piso", "doble_techo"])
-            
-            fig, ax = plt.subplots(figsize=(9, 4.5))
-            fig.patch.set_facecolor('#0e1117')
-            ax.set_facecolor('#0e1117')
-            
-            if tipo_figura == "canal_bajista":
-                x_vals = np.array([1, 3, 5, 7, 9])
-                y_techo = np.array([8000, 7960, 7920, 7880, 7840])
-                y_suelo = np.array([7950, 7910, 7870, 7830, 7790])
-                
-                ax.plot(x_vals, y_techo, color='#ff4b4b', linestyle='--', linewidth=2, label='IA - Techo del Canal')
-                ax.plot(x_vals, y_suelo, color='#00cc96', linestyle='--', linewidth=2, label='IA - Soporte del Canal')
-                
-                px = np.linspace(1, 9, 100)
-                py = 7980 - 20*px + np.sin(px*3)*15
-                ax.plot(px, py, color='white', linewidth=1.5, label='Precio Actual')
-                
-                patron_txt = "Canal Bajista Detectado por IA con alta confluencia"
-                signal = "🟢 COMPRA (LONG) en el Piso del Canal"
-                entry = "7,790.00"
-                sl = "7,775.00"
-                tp = "7,830.00"
-                
-            elif tipo_figura == "canal_alcista":
-                x_vals = np.array([1, 3, 5, 7, 9])
-                y_techo = np.array([7850, 7890, 7930, 7970, 8010])
-                y_suelo = np.array([7800, 7840, 7880, 7920, 7960])
-                
-                ax.plot(x_vals, y_techo, color='#ff4b4b', linestyle='--', linewidth=2, label='IA - Resistencia')
-                ax.plot(x_vals, y_suelo, color='#00cc96', linestyle='--', linewidth=2, label='IA - Línea Tendencial')
-                
-                px = np.linspace(1, 9, 100)
-                py = 7820 + 20*px + np.sin(px*3)*15
-                ax.plot(px, py, color='white', linewidth=1.5, label='Precio Actual')
-                
-                patron_txt = "Canal Alcista Validado por Red Neuronal"
-                signal = "🔴 VENTA (SHORT) en Resistencia"
-                entry = "8,000.00"
-                sl = "8,015.00"
-                tp = "7,930.00"
+    col_n1, col_n2, col_n3 = st.columns(3)
+    with col_n1:
+        precio_entrada = st.number_input("Precio de Entrada Real", value=7828.0000, format="%.4f")
+    with col_n2:
+        precio_sl = st.number_input("Stop Loss (SL) Real", value=7820.0000, format="%.4f")
+    with col_n3:
+        precio_tp = st.number_input("Take Profit (TP) Real", value=7845.0000, format="%.4f")
 
-            elif tipo_figura == "doble_piso":
-                x_p = np.array([1, 2.5, 4, 5.5, 7, 8.5, 10])
-                y_p = np.array([7900, 7800, 7860, 7802, 7870, 7830, 7950])
-                
-                ax.plot(x_p, y_p, color='#00cc96', linewidth=2, marker='o', label='IA - Doble Piso (W)')
-                ax.axhline(y=7800, color='#ffa500', linestyle=':', linewidth=2, label='Neckline')
-                
-                patron_txt = "Doble Piso (W) con probabilidad de éxito optimizada"
-                signal = "🟢 COMPRA (LONG) por Ruptura"
-                entry = "7,810.00"
-                sl = "7,795.00"
-                tp = "7,860.00"
-                
-            else:
-                x_p = np.array([1, 2.5, 4, 5.5, 7, 8.5, 10])
-                y_p = np.array([7800, 7900, 7840, 7898, 7830, 7870, 7750])
-                
-                ax.plot(x_p, y_p, color='#ff4b4b', linewidth=2, marker='o', label='IA - Doble Techo (M)')
-                ax.axhline(y=7900, color='#ffa500', linestyle=':', linewidth=2, label='Resistencia Clave')
-                
-                patron_txt = "Doble Techo (M) detectado por escaneo de patrones"
-                signal = "🔴 VENTA (SHORT) por Rechazo"
-                entry = "7,885.00"
-                sl = "7,905.00"
-                tp = "7,820.00"
+    if st.button("🚀 Ejecutar Análisis y Auditoría de Mercado", use_container_width=True):
+        
+        # Cálculos basados en los precios reales proporcionados
+        riesgo = abs(precio_entrada - precio_sl)
+        beneficio = abs(precio_tp - precio_entrada)
+        rr = beneficio / riesgo if riesgo > 0 else 0
+        
+        st.markdown("---")
+        st.markdown("### 📊 **Diagnóstico Técnico y Estructural:**")
+        
+        # Análisis basado en el histórico real si el usuario cargó el CSV
+        if df_precios is not None and ('Close' in df_precios.columns or 'close' in df_precios.columns):
+            col_c = 'Close' if 'Close' in df_precios.columns else 'close'
+            ultimos_precios = df_precios[col_c].tail(20).values
+            tendencia_matematica = "Alcista" if ultimos_precios[-1] > ultimos_precios[0] else "Bajista"
+            st.info(f"📈 **Análisis Estadístico del CSV:** La tendencia reciente en las últimas 20 velas es **{tendencia_matematica}** (Precio actual del histórico: {ultimos_precios[-1]:,.4f}).")
+        else:
+            st.info("💡 **Análisis de Acción del Precio:** Evalúa la confluencia de tus temporalidades M1, M5 y M15 con los niveles ingresados.")
 
-            ax.tick_params(colors='white')
-            ax.xaxis.label.set_color('white')
-            ax.yaxis.label.set_color('white')
-            ax.spines['bottom'].set_color('white')
-            ax.spines['top'].set_color('#0e1117')
-            ax.spines['left'].set_color('white')
-            ax.spines['right'].set_color('#0e1117')
-            ax.legend(facecolor='#262730', edgecolor='none', labelcolor='white', loc='upper right')
+        m_r1, m_r2, m_r3 = st.columns(3)
+        with m_r1:
+            st.metric(label="Riesgo en Puntos", value=f"{riesgo:.2f}")
+        with m_r2:
+            st.metric(label="Beneficio en Puntos", value=f"{beneficio:.2f}")
+        with m_r3:
+            st.metric(label="Ratio Beneficio / Riesgo (R:R)", value=f"1 : {rr:.2f}")
             
-            st.info(f"""
-            ### 🤖 **Diagnóstico de la Inteligencia Artificial:**
-            - **Método de Evaluación:** {metodo_eval}
-            - **Patrón Identificado:** {patron_txt}
-            - **🎯 Índice de Certeza / Probabilidad de Éxito:** **{probabilidad_ia}%**
-            """)
+        errores = 0
+        if "Compra" in tipo_operacion:
+            if precio_sl >= precio_entrada:
+                st.error("❌ **Error de Lógica:** En una Compra, el Stop Loss debe estar por debajo del precio de entrada.")
+                errores += 1
+            if precio_tp <= precio_entrada:
+                st.error("❌ **Error de Lógica:** En una Compra, el Take Profit debe estar por encima del precio de entrada.")
+                errores += 1
+        else:
+            if precio_sl <= precio_entrada:
+                st.error("❌ **Error de Lógica:** En una Venta, el Stop Loss debe estar por encima del precio de entrada.")
+                errores += 1
+            if precio_tp >= precio_entrada:
+                st.error("❌ **Error de Lógica:** En una Venta, el Take Profit debe estar por debajo del precio de entrada.")
+                errores += 1
+                
+        if rr < 2.0:
+            st.warning(f"⚠️ **Advertencia de R:R (1:{rr:.2f}):** La academia recomienda buscar un beneficio de al menos el doble del riesgo (1:2).")
+        else:
+            st.success(f"✅ **Gestión Aprobada:** El ratio de 1:{rr:.2f} cumple con el estándar institucional.")
             
-            st.markdown("### 📐 Esquema Gráfico Vectorial de la IA en M1:")
-            st.pyplot(fig)
-            
-            st.success(f"""
-            ### 🎯 **Configuración Sugerida por la IA:**
-            - **Dirección del Trade:** {signal}
-            - **📍 Entrada Recomendada:** **{entry}**
-            - **🛡️ Stop Loss Estructural:** **{sl}**
-            - **🎯 Take Profit Objetivo:** **{tp}**
-            """)
-            
-            if not permitir_operar or not lote_adecuado or not plan_definido or not tendencia_alineada:
-                st.error("🛑 **BLOQUEO DE SEGURIDAD INSTITUCIONAL:** Tus filtros de disciplina no están aprobados. Operación denegada por la IA.")
-            else:
-                st.markdown("✅ **ESTADO:** Confluencia aprobada por la IA y el trader. Ejecuta con disciplina.")
+        if errores == 0 and rr >= 2.0 and permitir_operar and lote_adecuado and plan_definido and tendencia_alineada:
+            st.success("🟢 **VEREDICTO FINAL: SETUP TÉCNICO VALIDADO Y APTO PARA EJECUTAR.**")
+        else:
+            st.warning("🟡 **VEREDICTO FINAL: Se detectaron observaciones en tu gestión o lógica de precios.**")
 else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para activar el motor de análisis con IA.")
+    st.info("👆 Sube tus capturas en las tres temporalidades para activar la auditoría técnica y de precios.")
