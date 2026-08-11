@@ -76,6 +76,7 @@ if img_m1 or img_m5 or img_m15:
                 
                 contenido_multimodal = [prompt_analisis] + imagenes_pil
                 
+                # Usando el modelo actual compatible
                 response = client.models.generate_content(
                     model='gemini-2.5-flash',
                     contents=contenido_multimodal
