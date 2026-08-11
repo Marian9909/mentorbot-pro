@@ -4,3 +4,4 @@ Pillow
 matplotlib
 numpy
 opencv-python-headless
+google-genai
