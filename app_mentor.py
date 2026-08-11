@@ -8,11 +8,14 @@ st.set_page_config(page_title="MentorBot Pro - Analista IA con Visión", page_ic
 st.title("📊 MentorBot Pro: Analista Técnico con Visión Artificial")
 st.markdown("---")
 
-# Panel lateral para la clave de API de Gemini y Mindset
-st.sidebar.header("🔑 Configuración de IA")
-api_key = st.sidebar.text_input("Ingresa tu Google Gemini API Key:", type="password")
+# Cargar la API Key de forma segura desde los secrets de Streamlit
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    st.error("⚠️ No se encontró la `GEMINI_API_KEY` en los secretos de Streamlit. Configura tu archivo secrets.toml o los secrets de la nube.")
+    st.stop()
 
-st.sidebar.markdown("---")
+# Panel lateral: Control Emocional
 st.sidebar.header("🧠 Control Emocional")
 emocion = st.sidebar.selectbox("Estado mental:", ["Calmo y enfocado", "Frustrado", "Ansioso"])
 
@@ -32,12 +35,11 @@ with col3:
     st.markdown("### ⏱️ Temporalidad M15")
     img_m15 = st.file_uploader("Subir M15", type=["png", "jpg", "jpeg"], key="m15")
 
-# Si el usuario sube al menos una imagen y coloca su API Key
-if (img_m1 or img_m5 or img_m15) and api_key:
+# Si el usuario sube al menos una imagen
+if img_m1 or img_m5 or img_m15:
     st.markdown("---")
     st.subheader("📸 Evidencias Gráficas Sincronizadas")
     
-    # Lista para almacenar las imágenes cargadas para la IA
     imagenes_pil = []
     
     p1, p2, p3 = st.columns(3)
@@ -63,7 +65,6 @@ if (img_m1 or img_m5 or img_m15) and api_key:
     if st.button("🚀 Ejecutar Análisis con Visión de IA", use_container_width=True):
         with st.spinner("El analista de IA está examinando la estructura de tus gráficos..."):
             try:
-                # Inicializar el cliente de la API de Google GenAI
                 client = genai.Client(api_key=api_key)
                 
                 prompt_analisis = (
@@ -73,12 +74,10 @@ if (img_m1 or img_m5 or img_m15) and api_key:
                     "es de COMPRA o de VENTA. Proporciona un informe detallado con la justificación basada en lo que ves en las gráficas."
                 )
                 
-                # Preparar el contenido para la API (Prompt + Imágenes)
                 contenido_multimodal = [prompt_analisis] + imagenes_pil
                 
-                # Llamada al modelo multimodal (Gemini 2.5 Flash / Pro)
                 response = client.models.generate_content(
-                    model='gemini-2.5-flash',
+                    model='gemini-2.0-flash',
                     contents=contenido_multimodal
                 )
                 
@@ -88,7 +87,5 @@ if (img_m1 or img_m5 or img_m15) and api_key:
                 
             except Exception as e:
                 st.error(f"❌ Ocurrió un error al procesar el análisis con la IA: {e}")
-elif (img_m1 or img_m5 or img_m15) and not api_key:
-    st.warning("⚠️ Por favor ingresa tu **Google Gemini API Key** en el panel lateral para permitir que la IA analice tus imágenes.")
 else:
-    st.info("👆 Sube al menos una captura de pantalla en las temporalidades y coloca tu clave de API para activar el análisis visual.")
+    st.info("👆 Sube al menos una captura de pantalla en las temporalidades para activar el análisis visual.")
