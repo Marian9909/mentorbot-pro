@@ -1,114 +1,118 @@
 import streamlit as st
-from PIL import Image
 
 # Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - Auditoría Estricta", page_icon="📈", layout="wide")
+st.set_page_config(page_title="MentorBot Pro - Analista Multiactivo", page_icon="📊", layout="wide")
 
-st.title("📈 MentorBot Pro: Auditoría y Corrección Estricta de Trading")
+st.title("📊 MentorBot Pro: Motor de Análisis Técnico Multiactivo")
 st.markdown("---")
 
-# Menú lateral: Control Emocional (Mindset)
-st.sidebar.header("🧠 Control Emocional (Mindset)")
-emocion = st.sidebar.selectbox(
-    "¿Cómo te sientes?",
-    ["Calmo y enfocado", "Frustrado", "Ansioso", "Eufórico"]
+# Panel lateral: Selector de Activo y Configuración
+st.sidebar.header("⚙️ Configuración del Analista")
+activo = st.sidebar.selectbox(
+    "Selecciona el Activo", 
+    ["Step Index", "Oro (XAUUSD)", "Bitcoin (BTC)"]
 )
+temporalidad = st.sidebar.selectbox("Temporalidad Principal", ["M1 (Micro)", "M5 (Estructura)", "M15 (Macro)"])
 
-lote_adecuado = st.sidebar.checkbox("¿Mi lote respeta estrictamente la gestión de riesgo?")
-plan_definido = st.sidebar.checkbox("Tengo claro mi plan de salida si el mercado se equivoca")
-tendencia_alineada = st.sidebar.checkbox("He confirmado la estructura en las 3 temporalidades")
+st.sidebar.markdown("---")
+st.sidebar.header("🧠 Control Emocional")
+emocion = st.sidebar.selectbox("Estado mental:", ["Calmo y enfocado", "Frustrado", "Ansioso"])
 
-if emocion != "Calmo y enfocado" or not lote_adecuado or not plan_definido or not tendencia_alineada:
-    st.sidebar.warning("⚠️ **Bloqueo de Mindset:** Revisa tus filtros de disciplina antes de operar.")
-    apto_operar = False
-else:
-    st.sidebar.success("✅ Estado y disciplina óptimos.")
-    apto_operar = True
+# Valores predeterminados inteligentes según el activo seleccionado
+if activo == "Step Index":
+    default_precio = 7828.0000
+    default_riesgo = 15.0
+    formato_precio = "%.4f"
+elif activo == "Oro (XAUUSD)":
+    default_precio = 2350.50
+    default_riesgo = 5.0
+    formato_precio = "%.2f"
+else:  # Bitcoin
+    default_precio = 64500.00
+    default_riesgo = 300.0
+    formato_precio = "%.2f"
 
-# Interfaz Principal: Carga de Capturas
-st.subheader("1. Sube tus capturas de pantalla (M1, M5, M15)")
-col1, col2, col3 = st.columns(3)
+# Interfaz Principal del Analista
+st.subheader(f"1. Inserción de Datos para el Análisis: {activo}")
+col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### ⏱️ Temporalidad M1")
-    img_m1 = st.file_uploader("Subir M1", type=["png", "jpg", "jpeg"], key="m1")
+    direccion_tesis = st.selectbox("Dirección Propuesta en tu Análisis:", ["🟢 COMPRA (Long)", "🔴 VENTA (Short)"])
+    precio_entrada = st.number_input(f"Precio de Entrada Actual ({activo})", value=default_precio, format=formato_precio)
 
 with col2:
-    st.markdown("### ⏱️ Temporalidad M5")
-    img_m5 = st.file_uploader("Subir M5", type=["png", "jpg", "jpeg"], key="m5")
-
-with col3:
-    st.markdown("### ⏱️ Temporalidad M15")
-    img_m15 = st.file_uploader("Subir M15", type=["png", "jpg", "jpeg"], key="m15")
-
-# Mostrar vistas previas si hay imágenes
-if img_m1 or img_m5 or img_m15:
-    st.markdown("---")
-    st.subheader("📸 Evidencias Gráficas Sincronizadas")
-    p1, p2, p3 = st.columns(3)
-    with p1:
-        if img_m1: st.image(img_m1, caption="Gráfico M1", use_container_width=True)
-    with p2:
-        if img_m5: st.image(img_m5, caption="Gráfico M5", use_container_width=True)
-    with p3:
-        if img_m15: st.image(img_m15, caption="Gráfico M15", use_container_width=True)
-
-    st.markdown("---")
-    st.subheader("2. Tu Propuesta de Operación")
-    
-    # El usuario propone qué quiere hacer
-    propuesta_usuario = st.selectbox(
-        "¿Qué operación deseas ejecutar según tu lectura?",
-        ["🟢 COMPRA (Long)", "🔴 VENTA (Short)"]
+    contexto_mercado = st.selectbox(
+        "Comportamiento actual del precio en la gráfica:",
+        [
+            "Impulso alcista fuerte (Rompiendo máximos)",
+            "Retroceso controlado hacia zona de soporte",
+            "Tendencia bajista con mínimos decrecientes",
+            "Rango o consolidación lateral"
+        ]
     )
+    distancia_sl_puntos = st.number_input(f"Riesgo estimado en puntos/dólares para el Stop Loss", value=default_riesgo)
 
-    c_n1, c_n2 = st.columns(2)
-    with c_n1:
-        precio_entrada = st.number_input("Precio de Entrada Real (Tu Línea en Deriv)", value=7828.0000, format="%.4f")
-    with c_n2:
-        distancia_riesgo = st.slider("Puntos de Riesgo para el Stop Loss", min_value=5, max_value=50, value=15, step=1)
+# Botón para que el Analista emita su informe
+if st.button(f"📈 Generar Informe Técnico para {activo}", use_container_width=True):
+    
+    st.markdown("---")
+    st.subheader(f"📑 Informe Técnico del Analista: {activo}")
+    
+    # Lógica analítica del script para evaluar congruencia técnica
+    alerta_contra_tendencia = False
+    
+    if "alcista" in contexto_mercado.lower() and "VENTA" in direccion_tesis:
+        alerta_contra_tendencia = True
+    elif "bajista" in contexto_mercado.lower() and "COMPRA" in direccion_tesis:
+        alerta_contra_tendencia = True
 
-    if st.button("🔍 Evaluar y Auditar mi Operación", use_container_width=True):
-        
-        ratio_beneficio = 2.0 
-        distancia_ganancia = distancia_riesgo * ratio_beneficio
-        
-        if "COMPRA" in propuesta_usuario:
-            precio_sl = precio_entrada - distancia_riesgo
-            precio_tp = precio_entrada + distancia_ganancia
-        else:
-            precio_sl = precio_entrada + distancia_riesgo
-            precio_tp = precio_entrada - distancia_ganancia
-            
-        st.markdown("---")
-        st.markdown(f"### 📊 **Veredicto del Mentor:**")
-        
-        # --- MOTOR DE CORRECCIÓN ESTRICTA ---
-        # Simulamos la auditoría real: Si el mercado muestra fuerza alcista en las capturas recientes 
-        # y el usuario selecciona Venta en una zona inoportuna, el bot lo reprueba y corrige.
-        
-        error_critico = False
-        
-        if "VENTA" in propuesta_usuario:
-            # Ejemplo de regla estricta: Si la estructura macro muestra mínimos crecientes, vender es un error
-            error_critico = True
-            st.error("❌ **REPROBADO POR EL MENTOR:** Estás intentando meter una **VENTA** en contra de la estructura macro de las temporalidades (M5/M15 muestran impulsos alcistas limpios). Operar contra tendencia aquí es sinónimo de pérdida.")
-            st.warning("💡 **Sugerencia del Mentor:** Espera un retroceso profundo a soporte o replantea el setup a favor de la tendencia principal (COMPRA).")
-        else:
-            st.success("✅ **ANÁLISIS ESTRUCTURAL APROBADO:** La compra está alineada con los impulsos de la estructura actual.")
-            
-        m1, m2, m3 = st.columns(3)
-        with m1:
-            st.metric(label="Stop Loss Sugerido", value=f"{precio_sl:.4f}")
-        with m2:
-            st.metric(label="Take Profit Sugerido", value=f"{precio_tp:.4f}")
-        with m3:
-            st.metric(label="Ratio R:R", value=f"1 : {ratio_beneficio}")
+    # Cálculos matemáticos del analista (Ratio 1:2 institucional)
+    ratio_rr = 2.0
+    distancia_tp_puntos = distancia_sl_puntos * ratio_rr
+    
+    if "COMPRA" in direccion_tesis:
+        sl = precio_entrada - distancia_sl_puntos
+        tp = precio_entrada + distancia_tp_puntos
+    else:
+        sl = precio_entrada + distancia_sl_puntos
+        tp = precio_entrada - distancia_tp_puntos
 
-        if not error_critico and apto_operar:
-            st.balloons()
-            st.success("🟢 **SETUP VALIDADO: Puedes proceder con disciplina.**")
+    # Desglose del análisis técnico
+    col_inf1, col_inf2 = st.columns(2)
+    
+    with col_inf1:
+        st.markdown(f"**Análisis de Estructura ({temporalidad}):**")
+        if "alcista" in contexto_mercado.lower():
+            st.write(f"• El {activo} presenta secuencia de máximos y mínimos crecientes.")
+            st.write("• Flujo de órdenes institucional orientado a la demanda.")
+        elif "bajista" in contexto_mercado.lower():
+            st.write(f"• El {activo} presenta secuencia de mínimos decrecientes.")
+            st.write("• Flujo de órdenes institucional orientado a la oferta.")
         else:
-            st.error("🛑 **OPERACIÓN DENEGADA POR EL SISTEMA:** No puedes enviar esta orden al mercado hasta corregir los errores señalados.")
-else:
-    st.info("👆 Sube tus capturas en las tres temporalidades para que el mentor evalúe tu propuesta.")
+            st.write(f"• El {activo} se encuentra en compresión o rango operativo.")
+            st.write("• Riesgo de falsas rupturas elevado en zonas intermedias.")
+
+    with col_inf2:
+        st.markdown("**Evaluación de la Tesis:**")
+        if alerta_contra_tendencia:
+            st.error("⚠️ **ADVERTENCIA TÉCNICA:** Tu propuesta va en contra del comportamiento actual del precio descrito en el contexto del mercado.")
+        else:
+            st.success("✅ **CONGRUENCIA TÉCNICA:** La dirección seleccionada está respaldada por el comportamiento del precio.")
+
+    st.markdown("---")
+    st.markdown(f"### 🎯 Niveles Operativos Calculados para {activo}:")
+    
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.metric("Entrada", f"{precio_entrada:{formato_precio}}")
+    with m2:
+        st.metric("Stop Loss (SL)", f"{sl:{formato_precio}}")
+    with m3:
+        st.metric("Take Profit (TP)", f"{tp:{formato_precio}}")
+    with m4:
+        st.metric("Ratio R:R", f"1 : {ratio_rr}")
+
+    st.info(f"""
+    **Conclusión del Analista para {activo}:** 
+    Para que esta operación en **{direccion_tesis}** mantenga validez técnica, el precio no debe invalidar la zona de control estructural ubicada en `{sl:{formato_precio}}`. El objetivo proyectado se establece en `{tp:{formato_precio}}` buscando el desequilibrio operativo.
+    """)
