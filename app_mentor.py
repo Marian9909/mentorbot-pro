@@ -1,118 +1,94 @@
 import streamlit as st
+from PIL import Image
+from google import genai
 
-# Configuración de la página en modo ancho (wide)
-st.set_page_config(page_title="MentorBot Pro - Analista Multiactivo", page_icon="📊", layout="wide")
+# Configuración de la página en modo ancho
+st.set_page_config(page_title="MentorBot Pro - Analista IA con Visión", page_icon="📈", layout="wide")
 
-st.title("📊 MentorBot Pro: Motor de Análisis Técnico Multiactivo")
+st.title("📊 MentorBot Pro: Analista Técnico con Visión Artificial")
 st.markdown("---")
 
-# Panel lateral: Selector de Activo y Configuración
-st.sidebar.header("⚙️ Configuración del Analista")
-activo = st.sidebar.selectbox(
-    "Selecciona el Activo", 
-    ["Step Index", "Oro (XAUUSD)", "Bitcoin (BTC)"]
-)
-temporalidad = st.sidebar.selectbox("Temporalidad Principal", ["M1 (Micro)", "M5 (Estructura)", "M15 (Macro)"])
+# Panel lateral para la clave de API de Gemini y Mindset
+st.sidebar.header("🔑 Configuración de IA")
+api_key = st.sidebar.text_input("Ingresa tu Google Gemini API Key:", type="password")
 
 st.sidebar.markdown("---")
 st.sidebar.header("🧠 Control Emocional")
 emocion = st.sidebar.selectbox("Estado mental:", ["Calmo y enfocado", "Frustrado", "Ansioso"])
 
-# Valores predeterminados inteligentes según el activo seleccionado
-if activo == "Step Index":
-    default_precio = 7828.0000
-    default_riesgo = 15.0
-    formato_precio = "%.4f"
-elif activo == "Oro (XAUUSD)":
-    default_precio = 2350.50
-    default_riesgo = 5.0
-    formato_precio = "%.2f"
-else:  # Bitcoin
-    default_precio = 64500.00
-    default_riesgo = 300.0
-    formato_precio = "%.2f"
-
-# Interfaz Principal del Analista
-st.subheader(f"1. Inserción de Datos para el Análisis: {activo}")
-col1, col2 = st.columns(2)
+# Interfaz Principal: Carga de Capturas
+st.subheader("1. Sube tus capturas de pantalla para que el Analista las examine")
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    direccion_tesis = st.selectbox("Dirección Propuesta en tu Análisis:", ["🟢 COMPRA (Long)", "🔴 VENTA (Short)"])
-    precio_entrada = st.number_input(f"Precio de Entrada Actual ({activo})", value=default_precio, format=formato_precio)
+    st.markdown("### ⏱️ Temporalidad M1")
+    img_m1 = st.file_uploader("Subir M1", type=["png", "jpg", "jpeg"], key="m1")
 
 with col2:
-    contexto_mercado = st.selectbox(
-        "Comportamiento actual del precio en la gráfica:",
-        [
-            "Impulso alcista fuerte (Rompiendo máximos)",
-            "Retroceso controlado hacia zona de soporte",
-            "Tendencia bajista con mínimos decrecientes",
-            "Rango o consolidación lateral"
-        ]
-    )
-    distancia_sl_puntos = st.number_input(f"Riesgo estimado en puntos/dólares para el Stop Loss", value=default_riesgo)
+    st.markdown("### ⏱️ Temporalidad M5")
+    img_m5 = st.file_uploader("Subir M5", type=["png", "jpg", "jpeg"], key="m5")
 
-# Botón para que el Analista emita su informe
-if st.button(f"📈 Generar Informe Técnico para {activo}", use_container_width=True):
-    
+with col3:
+    st.markdown("### ⏱️ Temporalidad M15")
+    img_m15 = st.file_uploader("Subir M15", type=["png", "jpg", "jpeg"], key="m15")
+
+# Si el usuario sube al menos una imagen y coloca su API Key
+if (img_m1 or img_m5 or img_m15) and api_key:
     st.markdown("---")
-    st.subheader(f"📑 Informe Técnico del Analista: {activo}")
+    st.subheader("📸 Evidencias Gráficas Sincronizadas")
     
-    # Lógica analítica del script para evaluar congruencia técnica
-    alerta_contra_tendencia = False
+    # Lista para almacenar las imágenes cargadas para la IA
+    imagenes_pil = []
     
-    if "alcista" in contexto_mercado.lower() and "VENTA" in direccion_tesis:
-        alerta_contra_tendencia = True
-    elif "bajista" in contexto_mercado.lower() and "COMPRA" in direccion_tesis:
-        alerta_contra_tendencia = True
-
-    # Cálculos matemáticos del analista (Ratio 1:2 institucional)
-    ratio_rr = 2.0
-    distancia_tp_puntos = distancia_sl_puntos * ratio_rr
-    
-    if "COMPRA" in direccion_tesis:
-        sl = precio_entrada - distancia_sl_puntos
-        tp = precio_entrada + distancia_tp_puntos
-    else:
-        sl = precio_entrada + distancia_sl_puntos
-        tp = precio_entrada - distancia_tp_puntos
-
-    # Desglose del análisis técnico
-    col_inf1, col_inf2 = st.columns(2)
-    
-    with col_inf1:
-        st.markdown(f"**Análisis de Estructura ({temporalidad}):**")
-        if "alcista" in contexto_mercado.lower():
-            st.write(f"• El {activo} presenta secuencia de máximos y mínimos crecientes.")
-            st.write("• Flujo de órdenes institucional orientado a la demanda.")
-        elif "bajista" in contexto_mercado.lower():
-            st.write(f"• El {activo} presenta secuencia de mínimos decrecientes.")
-            st.write("• Flujo de órdenes institucional orientado a la oferta.")
-        else:
-            st.write(f"• El {activo} se encuentra en compresión o rango operativo.")
-            st.write("• Riesgo de falsas rupturas elevado en zonas intermedias.")
-
-    with col_inf2:
-        st.markdown("**Evaluación de la Tesis:**")
-        if alerta_contra_tendencia:
-            st.error("⚠️ **ADVERTENCIA TÉCNICA:** Tu propuesta va en contra del comportamiento actual del precio descrito en el contexto del mercado.")
-        else:
-            st.success("✅ **CONGRUENCIA TÉCNICA:** La dirección seleccionada está respaldada por el comportamiento del precio.")
+    p1, p2, p3 = st.columns(3)
+    with p1:
+        if img_m1:
+            im1 = Image.open(img_m1)
+            st.image(im1, caption="Gráfico M1", use_container_width=True)
+            imagenes_pil.append(im1)
+    with p2:
+        if img_m5:
+            im5 = Image.open(img_m5)
+            st.image(im5, caption="Gráfico M5", use_container_width=True)
+            imagenes_pil.append(im5)
+    with p3:
+        if img_m15:
+            im15 = Image.open(img_m15)
+            st.image(im15, caption="Gráfico M15", use_container_width=True)
+            imagenes_pil.append(im15)
 
     st.markdown("---")
-    st.markdown(f"### 🎯 Niveles Operativos Calculados para {activo}:")
+    activo_objetivo = st.selectbox("Activo analizado en las capturas:", ["Step Index", "Oro (XAUUSD)", "Bitcoin (BTC)"])
     
-    m1, m2, m3, m4 = st.columns(4)
-    with m1:
-        st.metric("Entrada", f"{precio_entrada:{formato_precio}}")
-    with m2:
-        st.metric("Stop Loss (SL)", f"{sl:{formato_precio}}")
-    with m3:
-        st.metric("Take Profit (TP)", f"{tp:{formato_precio}}")
-    with m4:
-        st.metric("Ratio R:R", f"1 : {ratio_rr}")
-
-    st.info(f"""
-    **Conclusión del Analista para {activo}:** 
-    Para que esta operación en **{direccion_tesis}** mantenga validez técnica, el precio no debe invalidar la zona de control estructural ubicada en `{sl:{formato_precio}}`. El objetivo proyectado se establece en `{tp:{formato_precio}}` buscando el desequilibrio operativo.
-    """)
+    if st.button("🚀 Ejecutar Análisis con Visión de IA", use_container_width=True):
+        with st.spinner("El analista de IA está examinando la estructura de tus gráficos..."):
+            try:
+                # Inicializar el cliente de la API de Google GenAI
+                client = genai.Client(api_key=api_key)
+                
+                prompt_analisis = (
+                    f"Eres un analista técnico institucional experto en trading de {activo_objetivo}. "
+                    "Analiza las imágenes de las temporalidades proporcionadas. "
+                    "Identifica la estructura de precios actual, la tendencia dominante, y determina si el sesgo técnico "
+                    "es de COMPRA o de VENTA. Proporciona un informe detallado con la justificación basada en lo que ves en las gráficas."
+                )
+                
+                # Preparar el contenido para la API (Prompt + Imágenes)
+                contenido_multimodal = [prompt_analisis] + imagenes_pil
+                
+                # Llamada al modelo multimodal (Gemini 2.5 Flash / Pro)
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=contenido_multimodal
+                )
+                
+                st.markdown("---")
+                st.subheader("📑 Informe Técnico del Analista de IA")
+                st.markdown(response.text)
+                
+            except Exception as e:
+                st.error(f"❌ Ocurrió un error al procesar el análisis con la IA: {e}")
+elif (img_m1 or img_m5 or img_m15) and not api_key:
+    st.warning("⚠️ Por favor ingresa tu **Google Gemini API Key** en el panel lateral para permitir que la IA analice tus imágenes.")
+else:
+    st.info("👆 Sube al menos una captura de pantalla en las temporalidades y coloca tu clave de API para activar el análisis visual.")
